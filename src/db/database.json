@@ -1,0 +1,273 @@
+ { 
+    "Recipies":[
+        {
+            "id": "1",
+            "title":"Pizza",
+            "description": "Que disgraça",
+            "time": "60-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "2",
+            "title":"Pastel",
+            "description": "Outra disgraça",
+            "time": "180-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "3",
+            "title":"Coxinha",
+            "description": "Mais uma disgraça",
+            "time": "240-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "2",
+            "title":"Pastel",
+            "description": "Outra disgraça",
+            "time": "180-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "2",
+            "title":"Pastel",
+            "description": "Outra disgraça",
+            "time": "180-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "2",
+            "title":"Pastel",
+            "description": "Outra disgraça",
+            "time": "180-min",
+            "Ingredients":[
+                {
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                 
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        }
+
+
+
+
+
+
+    ]
+}
