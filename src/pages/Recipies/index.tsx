@@ -1,13 +1,12 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, FlatList, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import mockDb from '../../db/database.json';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
 const Recipies = () => {
 
   return (
-      <ScrollView contentContainerStyle={styles.scrollContainer} >
+    <ScrollView contentContainerStyle={styles.scrollContainer} >
       <Text style={styles.pageTitle}>Lista de receitas</Text>
         <FlatList keyExtractor={(Db => Db.id)} data={mockDb.Recipies} renderItem={({ item:recipe }) => (
           <TouchableOpacity style={styles.card}>
