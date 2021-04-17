@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import mockDb from '../../db/database.json';
 
-const Recipies = () => {
+const Recipes: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} >
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Recipies;
+export default Recipes;
