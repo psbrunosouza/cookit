@@ -3,7 +3,7 @@
         {
             "id": "1",
             "title":"Pizza",
-            "description": "Que disgraça",
+            "description": "Pizza boa e gostosa",
             "time": "60-min",
             "Ingredients":[
                 {
@@ -47,7 +47,7 @@
         {
             "id": "2",
             "title":"Pastel",
-            "description": "Outra disgraça",
+            "description": "Crocante e saboroso",
             "time": "180-min",
             "Ingredients":[
                 {
@@ -91,7 +91,7 @@
         {
             "id": "3",
             "title":"Coxinha",
-            "description": "Mais uma disgraça",
+            "description": "Cheia de frango",
             "time": "240-min",
             "Ingredients":[
                 {
@@ -135,7 +135,7 @@
         {
             "id": "4",
             "title":"Pastel",
-            "description": "Outra disgraça",
+            "description": "Meio adocicado",
             "time": "180-min",
             "Ingredients":[
                 {
@@ -179,7 +179,7 @@
         {
             "id": "5",
             "title":"Pastel",
-            "description": "Outra disgraça",
+            "description": "Com carne",
             "time": "180-min",
             "Ingredients":[
                 {
@@ -223,7 +223,7 @@
         {
             "id": "6",
             "title":"Pastel",
-            "description": "Outra disgraça",
+            "description": "Com carne seca",
             "time": "180-min",
             "Ingredients":[
                 {

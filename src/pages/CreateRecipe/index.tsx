@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useCallback } from 'react';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { 
@@ -19,13 +19,13 @@ interface IngredientData {
   quantity: number;
 }
 
-const CreateRecipe: React.FC = (props) => {
+const CreateRecipe: React.FC = () => {
   
   const [ingredients, setIngredients] = React.useState<IngredientData[]>([]);
 
   const addIngredient = useCallback((name: string, quantity: number) => {
     const ingredient = {
-      id: uuid(),
+      id: v4(),
       name, 
       quantity
     }
@@ -89,10 +89,6 @@ const CreateRecipe: React.FC = (props) => {
               </>
             )}
           />
-          
-          // <View>
-          //   <Text>{ingredient.name} | {ingredient.quantity}</Text>
-          // </View>
         )}
       />
    
