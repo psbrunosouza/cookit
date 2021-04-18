@@ -9,6 +9,7 @@ import {
   IconButton,
   Text,
   List,
+  Title
 } from 'react-native-paper'
 
 import { CreateIngredient } from '../CreateIngredient';
@@ -48,7 +49,7 @@ const CreateRecipe: React.FC = () => {
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.pageTitle}>Add new recipe</Text>
+      <Title style={styles.pageTitle}>Add new recipe</Title>
       <TextInput style={styles.input}
         label="Name"
         placeholder="Recipe name"

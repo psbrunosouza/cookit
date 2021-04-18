@@ -1,22 +1,64 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+
+// NATIVE COMPONENTS
+import { 
+  StyleSheet, 
+  ScrollView, 
+  FlatList,  
+} from 'react-native';
+
+import { 
+  Card, 
+  Title, 
+  Paragraph, 
+  Button, 
+  Caption,
+} from 'react-native-paper';
+
+//DATABASE
 import mockDb from '../../db/database.json';
 
 const Recipes: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} >
-      <Text style={styles.pageTitle}>Lista de receitas</Text>
-        <FlatList keyExtractor={(Db => Db.id)} data={mockDb.Recipies} renderItem={({ item:recipe }) => (
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardTitle}>
-              <Text>{recipe.title}</Text>
-              <Text style={styles.timeColor}>{recipe.time}</Text>
-            </View>
-            <Text>{recipe.description}</Text>
-          </TouchableOpacity>
+      <Title style={styles.pageTitle}>Lista de receitas</Title>
+        <FlatList 
+          keyExtractor={(Db => Db.id)} 
+          data={mockDb.Recipies} 
+          renderItem={({ item:recipe }) => (
+            <Card style={styles.card}>
+              <Card.Cover source={{ uri: `${recipe.imagePath}` }} />
+              <Card.Content>
+                <Title>{recipe.title}</Title>
+                <Paragraph>{recipe.description}</Paragraph>
+              </Card.Content>
+
+              <Card.Content>
+              
+              <Caption>Ingredients</Caption>
+              <FlatList
+                keyExtractor={ingredient => ingredient.id}
+                data={recipe.Ingredients}
+                style={styles.ingredientsList}
+                renderItem={({item: ingredient}) => (
+                  <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
+                )}
+              />
+            
+              </Card.Content>
+
+              <Card.Actions>
+                <Button 
+                  onPress={() => console.log(recipe.id)}>
+                    See more
+                </Button>
+              </Card.Actions>
+            </Card>
         )} />
+
+        
       </ScrollView>
   )
 }
@@ -54,16 +96,22 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    padding: 24,
-    width: 300,
-    height: 160,
-    backgroundColor: "white",
-    borderWidth: 3,
-    borderRadius: 8,
-    borderColor: '#2CAC60',
-    marginBottom: 24
-
+    width: 280,
+    marginBottom: 12
   },
+
+  ingredientsList: {
+    flexDirection: 'row'
+  },
+
+  ingredientTag: {
+    backgroundColor: '#359ff5',
+    color: '#fff',
+    marginRight: 4,
+    borderRadius: 8,
+    paddingLeft: 4,
+    paddingRight: 4
+  }
 });
 
 

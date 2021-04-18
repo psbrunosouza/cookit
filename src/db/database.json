@@ -1,23 +1,31 @@
 {
     "Recipies":[
         {
-            "id": "1",
+            "id": "813fc7f6-1464-4180-8a99-0b27eb921573",
             "title":"Pizza",
-            "description": "Pizza boa e gostosa",
-            "time": "60-min",
+            "description": "Pizza tradicional",
+            "imagePath": "https://www.alegrafoods.com.br/wp-content/uploads/2020/07/9-img-blog.png",
             "Ingredients":[
                 {
-                    "name":"salt",
-                    "quantity":"50g"
+                    "id": "1",
+                    "name":"Calabresa",
+                    "quantity":"2"
                 },
                 {
-                    "name": "tomato",
+                    "id": "1",
+                    "name": "Queijo",
                     "quantity": "30g"
                 },
 
                 {
-                    "name": "water",
+                    "id": "1",
+                    "name": "Sal",
                     "quantity": "100ml"
+                },
+                {
+                    "id": "1",
+                    "name": "Tomate",
+                    "quantity": "3"
                 }
             ],
 
@@ -45,21 +53,24 @@
         },
 
         {
-            "id": "2",
+            "id": "1e467a0e-d5e8-4ce8-aeea-38bd27cff922",
             "title":"Pastel",
             "description": "Crocante e saboroso",
-            "time": "180-min",
+            "imagePath": "https://guiadopastel.com.br/wp-content/uploads/2020/04/4-receitas-de-massa-de-pastel-dourado.jpg",
             "Ingredients":[
                 {
+                    "id": "1",
                     "name":"salt",
                     "quantity":"50g"
                 },
                 {
-                    "name": "tomato",
-                    "quantity": "30g"
+                    "id": "1",
+                    "name": "Carne",
+                    "quantity": "200g"
                 },
 
                 {
+                    "id": "1",
                     "name": "water",
                     "quantity": "100ml"
                 }
@@ -89,21 +100,24 @@
         },
 
         {
-            "id": "3",
+            "id": "2386df64-9abf-4a02-8b0e-9cc9291c58c5",
             "title":"Coxinha",
             "description": "Cheia de frango",
-            "time": "240-min",
+            "imagePath": "https://img.itdg.com.br/tdg/images/recipes/000/080/686/21535/21535_original.jpg?w=1200",
             "Ingredients":[
                 {
+                    "id": "1",
                     "name":"salt",
                     "quantity":"50g"
                 },
                 {
+                    "id": "1",
                     "name": "tomato",
                     "quantity": "30g"
                 },
 
                 {
+                    "id": "1",
                     "name": "water",
                     "quantity": "100ml"
                 }
@@ -133,21 +147,24 @@
         },
 
         {
-            "id": "4",
+            "id": "81d6ed1c-85b7-4245-92ac-cc883f8c8c2a",
             "title":"Pastel",
             "description": "Meio adocicado",
-            "time": "180-min",
+            "imagePath": "https://i.ytimg.com/vi/SkX3sf3Dvyc/maxresdefault.jpg",
             "Ingredients":[
                 {
+                    "id": "1",
                     "name":"salt",
                     "quantity":"50g"
                 },
                 {
+                    "id": "1",
                     "name": "tomato",
                     "quantity": "30g"
                 },
 
                 {
+                    "id": "1",
                     "name": "water",
                     "quantity": "100ml"
                 }
@@ -177,21 +194,24 @@
         },
 
         {
-            "id": "5",
+            "id": "b66a3a52-7d4f-49c6-b811-a98233a4c429",
             "title":"Pastel",
             "description": "Com carne",
-            "time": "180-min",
+            "imagePath": "https://www.receitas-sem-fronteiras.com/media/pastel-maria_crop.jpg/rh/pastel-de-carne.jpg",
             "Ingredients":[
                 {
+                    "id": "1",
                     "name":"salt",
                     "quantity":"50g"
                 },
                 {
+                    "id": "1",
                     "name": "tomato",
                     "quantity": "30g"
                 },
 
                 {
+                    "id": "1",
                     "name": "water",
                     "quantity": "100ml"
                 }
@@ -221,21 +241,24 @@
         },
 
         {
-            "id": "6",
+            "id": "f3536696-9793-43b3-8bb2-3988560e56b3",
             "title":"Pastel",
             "description": "Com carne seca",
-            "time": "180-min",
+            "imagePath": "https://loja.barracadoze.com.br/wp-content/uploads/sites/5/2020/10/pastel-carne-seca.jpg",
             "Ingredients":[
                 {
+                    "id": "1",
                     "name":"salt",
                     "quantity":"50g"
                 },
                 {
+                    "id": "1",
                     "name": "tomato",
                     "quantity": "30g"
                 },
 
                 {
+                    "id": "1",
                     "name": "water",
                     "quantity": "100ml"
                 }
