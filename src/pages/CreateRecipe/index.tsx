@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useCallback } from 'react';
+import { uuid } from 'uuidv4';
 
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { 
@@ -9,8 +10,6 @@ import {
   Text,
   List,
 } from 'react-native-paper'
-
-import Icon from 'react-native-vector-icons/Feather';
 
 import { CreateIngredient } from '../CreateIngredient';
 
@@ -24,16 +23,27 @@ const CreateRecipe: React.FC = (props) => {
   
   const [ingredients, setIngredients] = React.useState<IngredientData[]>([]);
 
-  const addComponent = useCallback((name: string, quantity: number) => {
-    let id = ingredients.length;
-
+  const addIngredient = useCallback((name: string, quantity: number) => {
     const ingredient = {
-      id: id.toString(),
+      id: uuid(),
       name, 
       quantity
     }
 
     setIngredients([...ingredients, ingredient]);
+  }, [ingredients]);
+
+  const removeIngredient = useCallback((id: string) => {
+    console.log(id);
+
+    const filteredIngredients = ingredients.filter((ingredient) => {
+      return ingredient.id !== id
+    });
+
+    console.log(filteredIngredients);
+
+    setIngredients([...filteredIngredients]);
+    
   }, [ingredients]);
   
   return (
@@ -74,6 +84,7 @@ const CreateRecipe: React.FC = (props) => {
                 icon="delete" 
                 size={26} 
                 color="#f71c1c"
+                onPress={() => removeIngredient(ingredient.id)}
                 />
               </>
             )}
@@ -85,7 +96,7 @@ const CreateRecipe: React.FC = (props) => {
         )}
       />
    
-      <CreateIngredient addIngredient={addComponent}/>
+      <CreateIngredient addIngredient={addIngredient}/>
 
       <View style={styles.ingredientContainer}>
         <TextInput style={styles.stepsInput}
