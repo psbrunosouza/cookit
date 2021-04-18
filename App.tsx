@@ -1,9 +1,22 @@
+import React from 'react';
+
+// import { StatusBar } from 'expo-status-bar';
+
+// ROUTES
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+// STYLE
 import { AppRegistry } from 'react-native';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import { 
+  DefaultTheme, 
+  BottomNavigation, 
+  Provider as PaperProvider,
+  Appbar
+} from 'react-native-paper';
+
+
+// PAGES
 import CreateRecipe from './src/pages/CreateRecipe';
 import Recipes from './src/pages/Recipes';
 
@@ -20,32 +33,32 @@ const theme = {
 
 
 export default function App() {
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'recipes', title: 'Recipes', icon: 'home' },
+    { key: 'createRecipe', title: 'Create Recipe', icon: 'plus-circle'}
+  ]);
+
+  const renderScene = BottomNavigation.SceneMap({
+    recipes: Recipes,
+    createRecipe: CreateRecipe,
+  });
+
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
-        <Stack.Navigator>
-          {/* <Stack.Screen name="Recipes" component={Recipes} options={{
-          title: 'My recipes',
-          headerStyle: {
-            backgroundColor: '#2CAC60',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} /> */}
 
-          <Stack.Screen name="Create Recipe" component={CreateRecipe} options={{
-          title: 'My recipes',
-          headerStyle: {
-            backgroundColor: '#2CAC60',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        </Stack.Navigator>
+        <Appbar.Header>
+          <Appbar.Content title="Cookit" />
+        </Appbar.Header>
+
+        <BottomNavigation
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderScene={renderScene}
+          theme={theme}
+        /> 
       </PaperProvider>
     </NavigationContainer>
   );
