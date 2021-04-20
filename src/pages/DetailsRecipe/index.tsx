@@ -2,7 +2,7 @@ import React from 'react';
 import { Title, Caption, Surface, IconButton } from 'react-native-paper';
 import { View, ScrollView, StyleSheet, Image } from 'react-native';
 
-const RecipeDetails:React.FC = () => {
+const DetailsRecipe:React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.imgContainer}>
@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default RecipeDetails;
+export default DetailsRecipe;

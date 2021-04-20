@@ -8,6 +8,8 @@ import {
   FlatList,  
 } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 import { 
   Card, 
   Title, 
@@ -20,10 +22,14 @@ import {
 import mockDb from '../../db/database.json';
 
 const Recipes: React.FC = () => {
+
+  const navigation = useNavigation();
+
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} >
+    <ScrollView contentContainerStyle={styles.Container}>
       <Title style={styles.pageTitle}>Lista de receitas</Title>
         <FlatList 
+          style={{marginBottom: 64}}
           keyExtractor={(Db => Db.id)} 
           data={mockDb.Recipies} 
           renderItem={({ item:recipe }) => (
@@ -49,24 +55,21 @@ const Recipes: React.FC = () => {
               </Card.Content>
 
               <Card.Actions>
-                <Button 
-                 >
+                <Button onPress={() => navigation.navigate("Details Recipe")}>
                     See more
                 </Button>
               </Card.Actions>
             </Card>
         )} />
-
-        
-      </ScrollView>
+    </ScrollView>
   )
 }
 
 
 const styles = StyleSheet.create({
-  scrollContainer: {
+  Container: {
     width: '100%',
-    alignItems: "center"
+    alignItems: "center",
   },
 
   pageTitle: {
