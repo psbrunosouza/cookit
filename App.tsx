@@ -6,6 +6,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+
 // STYLE
 import { AppRegistry } from 'react-native';
 import { 
@@ -19,6 +20,7 @@ import {
 // PAGES
 import CreateRecipe from './src/pages/CreateRecipe';
 import Recipes from './src/pages/Recipes';
+import RecipesDetails from './src/pages/Details';
 
 const Stack = createStackNavigator();
 
@@ -37,12 +39,14 @@ export default function App() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'recipes', title: 'Recipes', icon: 'home' },
-    { key: 'createRecipe', title: 'Create Recipe', icon: 'plus-circle'}
+    { key: 'createRecipe', title: 'Create Recipe', icon: 'plus-circle'},
+    {key: 'recipesDetails', title: 'Recipes Details', icon: 'book'}
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     recipes: Recipes,
     createRecipe: CreateRecipe,
+    recipesDetails: RecipesDetails
   });
 
   return (

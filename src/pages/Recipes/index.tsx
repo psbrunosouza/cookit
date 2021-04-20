@@ -20,7 +20,6 @@ import {
 import mockDb from '../../db/database.json';
 
 const Recipes: React.FC = () => {
-
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} >
       <Title style={styles.pageTitle}>Lista de receitas</Title>
@@ -51,7 +50,7 @@ const Recipes: React.FC = () => {
 
               <Card.Actions>
                 <Button 
-                  onPress={() => console.log(recipe.id)}>
+                 >
                     See more
                 </Button>
               </Card.Actions>
