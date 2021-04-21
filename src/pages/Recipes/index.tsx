@@ -55,7 +55,7 @@ const Recipes: React.FC = () => {
               </Card.Content>
 
               <Card.Actions>
-                <Button onPress={() => navigation.navigate("Details Recipe")}>
+                <Button onPress={() => navigation.navigate("Details Recipe", {recipe: recipe})}>
                     See more
                 </Button>
               </Card.Actions>
