@@ -21,6 +21,8 @@ import {
 //DATABASE
 import mockDb from '../../db/database.json';
 
+
+
 const Recipes: React.FC = () => {
 
   const navigation = useNavigation();
@@ -44,9 +46,9 @@ const Recipes: React.FC = () => {
               
               <Caption>Ingredients</Caption>
               <FlatList
+                style={styles.ingredientsList}
                 keyExtractor={ingredient => ingredient.id}
                 data={recipe.Ingredients}
-                style={styles.ingredientsList}
                 renderItem={({item: ingredient}) => (
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
@@ -55,7 +57,8 @@ const Recipes: React.FC = () => {
               </Card.Content>
 
               <Card.Actions>
-                <Button onPress={() => navigation.navigate("Details Recipe", {recipe: recipe})}>
+                <Button onPress={() => navigation
+                    .navigate("Details Recipe", {recipe: recipe})}>
                     See more
                 </Button>
               </Card.Actions>
