@@ -3,7 +3,7 @@ import React from 'react';
 // ROUTES
 import { NavigationContainer } from '@react-navigation/native';
 import { MainNavigation } from './src/navigation/MainNavigation';
-import { DefaultTheme, Appbar } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 const theme = {
   ...DefaultTheme,
@@ -17,14 +17,11 @@ const theme = {
 export default function App() {
 
   return (
-    <NavigationContainer >
-      {/* <Appbar.Header>
-        <Appbar.Content title="Cookit" />
-      </Appbar.Header> */}
-
-      <MainNavigation />
-
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer >
+        <MainNavigation />
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 

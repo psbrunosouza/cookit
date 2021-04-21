@@ -1,33 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Title, Caption, Surface, IconButton } from 'react-native-paper';
 import { View, ScrollView, StyleSheet, Image } from 'react-native';
+import {ShowIngredients} from '../ShowIngredients';
+import { RouteProp } from '@react-navigation/native';
+import {Ingredient} from '../../models/Ingredient';
 
-const DetailsRecipe:React.FC = () => {
+type Props = {
+    route: RouteProp<any, any>
+};
+
+const DetailsRecipe:React.FC<Props> = ({route}) => {
+    
+    const[ingredients, setIngredients] = useState<Ingredient[]>([]);
+
+    useEffect(() => {
+        setIngredients(route.params?.recipe.Ingredients)
+    }, [ingredients])
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        
             <View style={styles.imgContainer}>
                 <Image style={styles.imgStyle} source={{uri:'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=653&q=80'}}></Image>
             </View>
+                    
+            <Title style={styles.titleStyle}>Sandwich</Title>  
 
-                  
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Title style={styles.titleStyle}>Sandwich</Title>  
+            <Caption style={styles.CaptionWidth}>
+                Está é uma deliciosa pizza, feita com tudo o quê há de bom para que você encha o seu buchinho
+            </Caption>
 
-                <Caption style={styles.CaptionWidth}>
-                    Está é uma deliciosa pizza, feita com tudo o quê há de bom para que você encha o seu buchinho
-                </Caption>
-            
-                <View style={styles.buttonStyle}>
-                    <Surface style={styles.surface}>
-                        <IconButton color='#4889eb' icon="square-edit-outline"></IconButton>
-                    </Surface>
+            <View style={styles.buttonStyle}>
+                <Surface style={styles.surface}>
+                    <IconButton color='#4889eb' icon="square-edit-outline"></IconButton>
+                </Surface>
 
-                    <Surface style={styles.surface}>
-                        <IconButton onPress={() => console.log('Deletar')}  color='#f71c1c' icon="delete"></IconButton>
-                    </Surface>
-                </View>
-            </ScrollView>
-        </View>
+                <Surface style={styles.surface}>
+                    <IconButton onPress={() => console.log('Deletar')}  color='#f71c1c' icon="delete"></IconButton>
+                </Surface>
+            </View>
+
+            <View>
+                <ShowIngredients ingredients={ingredients}/>
+            </View>
+      
+        </ScrollView>
     );
 }
 
