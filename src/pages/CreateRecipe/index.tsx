@@ -1,11 +1,14 @@
 import 'react-native-gesture-handler';
 import React, { useCallback } from 'react';
 import { v4 } from 'uuid';
+import { Formik } from 'formik';
+import { RecipeService } from '../../services/RecipeService'
+import { Step } from '../../models/Step'
 
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
-import { 
-  TextInput, 
-  Button, 
+import {
+  TextInput,
+  Button,
   IconButton,
   Text,
   List,
@@ -13,6 +16,7 @@ import {
 } from 'react-native-paper'
 
 import { CreateIngredient } from '../CreateIngredient';
+import { RecipesProps } from '../../models/Recipe';
 
 interface IngredientData {
   id: string;
@@ -21,13 +25,27 @@ interface IngredientData {
 }
 
 const CreateRecipe: React.FC = () => {
-  
+
   const [ingredients, setIngredients] = React.useState<IngredientData[]>([]);
+  const [steps, setSteps] = React.useState<Step[]>([]);
+
+  const  createRecipe  = async ({ title, description, imagePath }: any )  =>  {
+    const recipeService = new RecipeService()
+    const newIngredient:RecipesProps = {
+      id: v4(),
+      title,
+      description,
+      imagePath,
+      ingredients: ingredients,
+      steps: steps
+    }
+    await recipeService.create(newIngredient)
+  }
 
   const addIngredient = useCallback((name: string, quantity: number) => {
     const ingredient = {
       id: v4(),
-      name, 
+      name,
       quantity
     }
 
@@ -44,75 +62,96 @@ const CreateRecipe: React.FC = () => {
     console.log(filteredIngredients);
 
     setIngredients([...filteredIngredients]);
-    
+
   }, [ingredients]);
-  
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Title style={styles.pageTitle}>Add new recipe</Title>
-      <TextInput style={styles.input}
-        label="Name"
-        placeholder="Recipe name"
-        keyboardType='default'
-        mode="outlined"
-      />
+      <Formik initialValues={{ title: '', description: '', imagePath: '' }} onSubmit={value => createRecipe(value)} >
+        {
+          ({ handleSubmit, values, handleBlur, handleChange }) => (
+            <View style={styles.viewStyle}>
+              <TextInput style={styles.input}
+                label="Name"
+                placeholder="Recipe name"
+                keyboardType='default'
+                mode="outlined"
+                onChangeText={handleChange('title')}
+                value={values.title}
+              />
 
-      <TextInput style={styles.input}
-        label="Description"
-        placeholder="Two tomatoes, 1 cup of soup, 3 bowls of sugar"
-        keyboardType="default"
-        mode="outlined"
-      />
-  
-      <FlatList 
-        keyExtractor={(ingredient => ingredient.id)} 
-        data={ingredients} 
-        renderItem={({ item: ingredient }) => (
-          <List.Item
-          
-            title={ingredient.name}
-            description={`Quantidade: ${ingredient.quantity}`}
-            left={props => <List.Icon {...props} icon="file" />}
-            right={props =>(
-              <>
+              <TextInput style={styles.input}
+                label="Description"
+                placeholder="Two tomatoes, 1 cup of soup, 3 bowls of sugar"
+                keyboardType="default"
+                mode="outlined"
+                onChangeText={handleChange('description')}
+                value={values.description}
+              />
+
+              <TextInput style={styles.input}
+                label="imagePath"
+                placeholder="www.unsplash/image"
+                keyboardType="default"
+                mode="outlined"
+                onChangeText={handleChange('imagePath')}
+                value={values.imagePath}
+              />
+
+              <FlatList
+                keyExtractor={(ingredient => ingredient.id)}
+                data={ingredients}
+                renderItem={({ item: ingredient }) => (
+                  <List.Item
+
+                    title={ingredient.name}
+                    description={`Quantidade: ${ingredient.quantity}`}
+                    left={props => <List.Icon {...props} icon="file" />}
+                    right={props => (
+                      <>
+                        <IconButton
+                          icon="square-edit-outline"
+                          size={26}
+                          color="#4889eb"
+                        />
+
+                        <IconButton
+                          icon="delete"
+                          size={26}
+                          color="#f71c1c"
+                          onPress={() => removeIngredient(ingredient.id)}
+                        />
+                      </>
+                    )}
+                  />
+                )}
+              />
+
+              <CreateIngredient addIngredient={addIngredient} />
+
+              <View style={styles.ingredientContainer}>
+                <TextInput style={styles.stepsInput}
+                  label="Steps"
+                  placeholder="Insert the steps"
+                  keyboardType="default"
+                  mode="outlined"
+                />
                 <IconButton
-                icon="square-edit-outline" 
-                size={26} 
-                color="#4889eb"
+                  style={styles.buttonInput}
+                  icon="plus-circle"
+                  size={30}
+                  color="#2CAC60"
                 />
-                
-                <IconButton 
-                icon="delete" 
-                size={26} 
-                color="#f71c1c"
-                onPress={() => removeIngredient(ingredient.id)}
-                />
-              </>
-            )}
-          />
-        )}
-      />
-   
-      <CreateIngredient addIngredient={addIngredient}/>
+              </View>
 
-      <View style={styles.ingredientContainer}>
-        <TextInput style={styles.stepsInput}
-          label="Steps"
-          placeholder="Insert the steps"
-          keyboardType="default"
-          mode="outlined"
-        />
-        <IconButton 
-          style={styles.buttonInput} 
-          icon="plus-circle" 
-          size={30} 
-          color="#2CAC60" 
-        />
-      </View>
-
-      <Button style={styles.buttonStyle} mode="contained" compact={false}>
-        <Text style={styles.buttonTextStyle}>Register</Text>
-       </Button>
+              <Button onPress={handleSubmit} style={styles.buttonStyle} mode="contained" compact={false}>
+                <Text style={styles.buttonTextStyle}>Register</Text>
+              </Button>
+            </View>
+          )
+        }
+      </Formik>
     </ScrollView>
 
   )
@@ -120,16 +159,27 @@ const CreateRecipe: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+
+  },
+
+  viewStyle: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
 
   input: {
-    marginTop: "5%",
+    marginTop: '5%',
     width: '80%',
   },
 
   ingredientContainer: {
-    marginTop: "5%",
+    marginTop: 5,
     flexDirection: 'row',
     width: '80%',
     alignItems: "center"
@@ -158,7 +208,7 @@ const styles = StyleSheet.create({
     marginTop: "10%"
   },
 
-  buttonTextStyle: { 
+  buttonTextStyle: {
     color: "#fff"
   },
 
@@ -169,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
 
   },
-  
+
 })
 
 export default CreateRecipe;

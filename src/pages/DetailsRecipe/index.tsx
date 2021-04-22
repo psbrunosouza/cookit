@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Title, Caption, Surface, IconButton } from 'react-native-paper';
-import { View, ScrollView, StyleSheet, Image } from 'react-native';
-import {ShowIngredients} from '../ShowIngredients';
-import { RouteProp } from '@react-navigation/native';
-import {Ingredient} from '../../models/Ingredient';
+import React, { useState, useEffect } from "react";
+import { Title, Caption, Surface, IconButton } from "react-native-paper";
+import { View, ScrollView, StyleSheet, Image } from "react-native";
+import { ShowIngredients } from "../ShowIngredients";
+import { RouteProp } from "@react-navigation/native";
+import { Ingredient } from "../../models/Ingredient";
 
 type Props = {
     route: RouteProp<any, any>
@@ -14,7 +14,7 @@ const DetailsRecipe:React.FC<Props> = ({route}) => {
     const[ingredients, setIngredients] = useState<Ingredient[]>([]);
 
     useEffect(() => {
-        setIngredients(route.params?.recipe.Ingredients)
+        setIngredients(route.params?.recipe.ingredients)
     }, [ingredients])
 
     return (

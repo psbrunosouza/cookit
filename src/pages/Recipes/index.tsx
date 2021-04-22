@@ -1,5 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import { RecipeService } from '../../services/recipeService'
+import { RecipesProps } from '../../models/Recipe' 
 
 // NATIVE COMPONENTS
 import { 
@@ -18,22 +20,23 @@ import {
   Caption,
 } from 'react-native-paper';
 
-//DATABASE
-import mockDb from '../../db/database.json';
-
-
 
 const Recipes: React.FC = () => {
-
+  const [recipes, setRecipes] = React.useState<RecipesProps[]>([])
   const navigation = useNavigation();
-
+   React.useEffect( () =>  {
+    const recipeService = new RecipeService()
+    recipeService.show().then((response) => {
+       setRecipes(response)
+     })
+  }, [])
   return (
     <ScrollView contentContainerStyle={styles.Container}>
       <Title style={styles.pageTitle}>Lista de receitas</Title>
         <FlatList 
           style={{marginBottom: 64}}
-          keyExtractor={(Db => Db.id)} 
-          data={mockDb.Recipies} 
+          keyExtractor={(recipe => recipe.id)} 
+          data={recipes} 
           renderItem={({ item:recipe }) => (
             <Card style={styles.card}>
               <Card.Cover source={{ uri: `${recipe.imagePath}` }} />
@@ -48,7 +51,7 @@ const Recipes: React.FC = () => {
               <FlatList
                 style={styles.ingredientsList}
                 keyExtractor={ingredient => ingredient.id}
-                data={recipe.Ingredients}
+                data={recipe.ingredients}
                 renderItem={({item: ingredient}) => (
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
