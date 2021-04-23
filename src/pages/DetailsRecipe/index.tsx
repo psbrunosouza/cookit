@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Title, Caption, Surface, IconButton } from "react-native-paper";
-import { View, ScrollView, StyleSheet, Image } from "react-native";
+import { Title, Caption, Surface, IconButton, Card, Paragraph, Divider} from "react-native-paper";
+import { View, ScrollView, StyleSheet, Image, FlatList} from "react-native";
 import { ShowIngredients } from "../ShowIngredients";
 import { RouteProp } from "@react-navigation/native";
 import { Ingredient } from "../../models/Ingredient";
+import {Step} from "../../models/Step";
 
 type Props = {
     route: RouteProp<any, any>
@@ -11,13 +12,18 @@ type Props = {
 
 const DetailsRecipe:React.FC<Props> = ({route}) => {
     
+    const[counter, setCounter] = useState(1);
     const[ingredients, setIngredients] = useState<Ingredient[]>([]);
+    const[steps, setSteps] = useState<Step[]>([]);
 
     useEffect(() => {
         setIngredients(route.params?.recipe.ingredients)
-    }, [ingredients])
+        setSteps(route.params?.recipe.steps)
+    }, [ingredients, steps])
+
 
     return (
+        
         <ScrollView contentContainerStyle={styles.scrollContainer}>
         
             <View style={styles.imgContainer}>
@@ -43,6 +49,24 @@ const DetailsRecipe:React.FC<Props> = ({route}) => {
             <View>
                 <ShowIngredients ingredients={ingredients}/>
             </View>
+            <Caption style={styles.CaptionWidth}> Step by step </Caption>
+            <Card style={styles.card}>
+            <FlatList 
+            keyExtractor={step =>step.id} 
+            data={steps} 
+            renderItem={({item:step})=>(
+                <>
+                <Card.Content>
+                {/*<Title>{`Passo #${counter}`}</Title>*/}
+                    <Caption>{`# ${step.description}`}</Caption>
+                </Card.Content>
+                <Divider/>
+
+                </>
+                
+                )}       
+            />
+            </Card>
       
         </ScrollView>
     );
@@ -50,6 +74,12 @@ const DetailsRecipe:React.FC<Props> = ({route}) => {
 
 
 const styles = StyleSheet.create({
+    card: {
+        width: 280,
+        marginBottom: 12,
+        padding:6
+      },
+
     container: {
       alignItems: 'center'
     },

@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 
   ingredientsTable: {
     width: 260,
-    marginBottom: 64
+    marginBottom: 12
   },
 
   ingredientsTableRow: {
