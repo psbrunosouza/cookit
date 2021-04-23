@@ -40,6 +40,19 @@ const CreateRecipe: React.FC = () => {
     console.log(steps);
   }, [steps]);
 
+  const removeStep = useCallback((id: string) => {
+    console.log(id);
+
+    const filteredSteps = steps.filter((step) => {
+      return step.id !== id
+    });
+
+    console.log(filteredSteps);
+
+    setSteps([...filteredSteps]);
+
+  }, [steps]);
+
   const  createRecipe  = async ({ title, description, imagePath }: any )  =>  {
     const recipeService = new RecipeService()
     const newIngredient:RecipesProps = {
@@ -161,7 +174,7 @@ const CreateRecipe: React.FC = () => {
                           icon="delete"
                           size={26}
                           color="#f71c1c"
-                          onPress={() => console.log('deletado')}
+                          onPress={() => removeStep(step.id)}
                         />
                       </>
                     )}
