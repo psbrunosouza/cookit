@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { RecipeService } from '../../services/recipeService'
+import { RecipeService } from '../../services/RecipeService'
 import { RecipesProps } from '../../models/Recipe' 
 
 // NATIVE COMPONENTS

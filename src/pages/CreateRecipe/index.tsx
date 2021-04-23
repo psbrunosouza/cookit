@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import { RecipeService } from '../../services/RecipeService'
 import { Step } from '../../models/Step'
 
+
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import {
   TextInput,
@@ -17,6 +18,7 @@ import {
 
 import { CreateIngredient } from '../CreateIngredient';
 import { RecipesProps } from '../../models/Recipe';
+import { CreateSteps } from '../CreateSteps';
 
 interface IngredientData {
   id: string;
@@ -28,6 +30,15 @@ const CreateRecipe: React.FC = () => {
 
   const [ingredients, setIngredients] = React.useState<IngredientData[]>([]);
   const [steps, setSteps] = React.useState<Step[]>([]);
+  const addSteps= useCallback((description: string) => {
+    const step= {
+      id: v4(),
+      description
+    }
+
+    setSteps([...steps, step]);
+    console.log(steps);
+  }, [steps]);
 
   const  createRecipe  = async ({ title, description, imagePath }: any )  =>  {
     const recipeService = new RecipeService()
@@ -130,20 +141,36 @@ const CreateRecipe: React.FC = () => {
 
               <CreateIngredient addIngredient={addIngredient} />
 
-              <View style={styles.ingredientContainer}>
-                <TextInput style={styles.stepsInput}
-                  label="Steps"
-                  placeholder="Insert the steps"
-                  keyboardType="default"
-                  mode="outlined"
-                />
-                <IconButton
-                  style={styles.buttonInput}
-                  icon="plus-circle"
-                  size={30}
-                  color="#2CAC60"
-                />
-              </View>
+              <FlatList style={{width:'80%'}}
+                keyExtractor={(step => step.id)}
+                data={steps}
+                renderItem={({ item: step }) => (
+                  <List.Item
+
+                    title={`Passo:1`}
+                    description={`#${step.description}`}
+                    right={props => (
+                      <>
+                        <IconButton
+                          icon="square-edit-outline"
+                          size={26}
+                          color="#4889eb"
+                        />
+
+                        <IconButton
+                          icon="delete"
+                          size={26}
+                          color="#f71c1c"
+                          onPress={() => console.log('deletado')}
+                        />
+                      </>
+                    )}
+                  />
+                )}
+              />
+
+              <CreateSteps addSteps={addSteps}/>
+
 
               <Button onPress={handleSubmit} style={styles.buttonStyle} mode="contained" compact={false}>
                 <Text style={styles.buttonTextStyle}>Register</Text>
