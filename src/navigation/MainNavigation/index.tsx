@@ -2,12 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Recipes from '../../pages/Recipes';
+import Recipes from '../../pages/ShowRecipes';
 import CreateRecipe from '../../pages/CreateRecipe';
 import DetailsRecipe from '../../pages/DetailsRecipe';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { color } from "react-native-reanimated";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

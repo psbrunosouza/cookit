@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useCallback } from 'react';
+import { useNavigation } from '@react-navigation/core';
 import { v4 } from 'uuid';
 import { Formik } from 'formik';
 import { RecipeService } from '../../services/RecipeService'
@@ -7,14 +8,7 @@ import { Step } from '../../models/Step'
 
 
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
-import {
-  TextInput,
-  Button,
-  IconButton,
-  Text,
-  List,
-  Title
-} from 'react-native-paper'
+import { TextInput, Button, IconButton, Text, List, Title } from 'react-native-paper'
 
 import { CreateIngredient } from '../CreateIngredient';
 import { RecipesProps } from '../../models/Recipe';
@@ -30,6 +24,9 @@ const CreateRecipe: React.FC = () => {
 
   const [ingredients, setIngredients] = React.useState<IngredientData[]>([]);
   const [steps, setSteps] = React.useState<Step[]>([]);
+  
+  const navigation = useNavigation();
+
   const addSteps= useCallback((description: string) => {
     const step= {
       id: v4(),
@@ -63,7 +60,7 @@ const CreateRecipe: React.FC = () => {
       ingredients: ingredients,
       steps: steps
     }
-    await recipeService.create(newIngredient)
+    await recipeService.create(newIngredient);
   }
 
   const addIngredient = useCallback((name: string, quantity: number) => {
@@ -92,7 +89,8 @@ const CreateRecipe: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Title style={styles.pageTitle}>Add new recipe</Title>
-      <Formik initialValues={{ title: '', description: '', imagePath: '' }} onSubmit={value => createRecipe(value)} >
+      <Formik initialValues={{ title: '', description: '', imagePath: '' }} 
+              onSubmit={value => createRecipe(value)} >
         {
           ({ handleSubmit, values, handleBlur, handleChange }) => (
             <View style={styles.viewStyle}>
@@ -101,6 +99,7 @@ const CreateRecipe: React.FC = () => {
                 placeholder="Recipe name"
                 keyboardType='default'
                 mode="outlined"
+                onBlur={handleBlur('title')}
                 onChangeText={handleChange('title')}
                 value={values.title}
               />
@@ -110,6 +109,7 @@ const CreateRecipe: React.FC = () => {
                 placeholder="Two tomatoes, 1 cup of soup, 3 bowls of sugar"
                 keyboardType="default"
                 mode="outlined"
+                onBlur={handleBlur('description')}
                 onChangeText={handleChange('description')}
                 value={values.description}
               />
@@ -119,19 +119,20 @@ const CreateRecipe: React.FC = () => {
                 placeholder="www.unsplash/image"
                 keyboardType="default"
                 mode="outlined"
+                onBlur={handleBlur('imagePath')}
                 onChangeText={handleChange('imagePath')}
                 value={values.imagePath}
               />
 
               <FlatList
+                style={{width:'80%'}}
+                scrollEnabled={true}
                 keyExtractor={(ingredient => ingredient.id)}
                 data={ingredients}
                 renderItem={({ item: ingredient }) => (
                   <List.Item
-
                     title={ingredient.name}
                     description={`Quantidade: ${ingredient.quantity}`}
-                    left={props => <List.Icon {...props} icon="file" />}
                     right={props => (
                       <>
                         <IconButton
@@ -154,7 +155,9 @@ const CreateRecipe: React.FC = () => {
 
               <CreateIngredient addIngredient={addIngredient} />
 
-              <FlatList style={{width:'80%'}}
+              <FlatList 
+                style={{width:'80%'}}
+                scrollEnabled={true}
                 keyExtractor={(step => step.id)}
                 data={steps}
                 renderItem={({ item: step }) => (
@@ -185,7 +188,14 @@ const CreateRecipe: React.FC = () => {
               <CreateSteps addSteps={addSteps}/>
 
 
-              <Button onPress={handleSubmit} style={styles.buttonStyle} mode="contained" compact={false}>
+              <Button 
+                onPress={() => {
+                  handleSubmit();
+                  navigation.navigate('Show Recipes');
+                }} 
+                style={styles.buttonStyle} 
+                mode="contained" 
+                compact={false}>
                 <Text style={styles.buttonTextStyle}>Register</Text>
               </Button>
             </View>
@@ -200,10 +210,8 @@ const CreateRecipe: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    flex: 1,
     width: '100%',
     justifyContent: 'center',
-
   },
 
   viewStyle: {

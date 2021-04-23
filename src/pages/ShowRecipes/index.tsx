@@ -24,12 +24,14 @@ import {
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = React.useState<RecipesProps[]>([])
   const navigation = useNavigation();
-   React.useEffect( () =>  {
+  
+  React.useEffect(() =>  {
     const recipeService = new RecipeService()
     recipeService.show().then((response) => {
        setRecipes(response)
-     })
-  }, [])
+    });
+  }, [recipes]);
+
   return (
     <ScrollView contentContainerStyle={styles.Container}>
       <Title style={styles.pageTitle}>Lista de receitas</Title>
