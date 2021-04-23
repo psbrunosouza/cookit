@@ -6,7 +6,6 @@ import { Formik } from 'formik';
 import { RecipeService } from '../../services/RecipeService'
 import { Step } from '../../models/Step'
 
-
 import { StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { TextInput, Button, IconButton, Text, List, Title } from 'react-native-paper'
 
@@ -253,7 +252,8 @@ const styles = StyleSheet.create({
 
   buttonStyle: {
     width: "80%",
-    marginTop: "10%"
+    marginTop: "10%",
+    marginBottom:"10%"
   },
 
   buttonTextStyle: {

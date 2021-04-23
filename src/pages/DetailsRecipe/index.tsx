@@ -5,6 +5,7 @@ import { ShowIngredients } from "../ShowIngredients";
 import { RouteProp } from "@react-navigation/native";
 import { Ingredient } from "../../models/Ingredient";
 import {Step} from "../../models/Step";
+import { RecipesProps } from "../../models/Recipe";
 
 type Props = {
     route: RouteProp<any, any>
@@ -14,10 +15,12 @@ const DetailsRecipe:React.FC<Props> = ({route}) => {
     
     const[counter, setCounter] = useState(1);
     const[ingredients, setIngredients] = useState<Ingredient[]>([]);
+    const[recipes, setRecipes] = useState<RecipesProps>({} as RecipesProps);
     const[steps, setSteps] = useState<Step[]>([]);
 
     useEffect(() => {
         setIngredients(route.params?.recipe.ingredients)
+        setRecipes(route.params?.recipe)
         setSteps(route.params?.recipe.steps)
     }, [ingredients, steps])
 
@@ -27,13 +30,13 @@ const DetailsRecipe:React.FC<Props> = ({route}) => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
         
             <View style={styles.imgContainer}>
-                <Image style={styles.imgStyle} source={{uri:'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=653&q=80'}}></Image>
+                <Image style={styles.imgStyle} source={{uri:recipes.imagePath}}></Image>
             </View>
                     
-            <Title style={styles.titleStyle}>Sandwich</Title>  
+            <Title style={styles.titleStyle}>{recipes.title}</Title>  
 
             <Caption style={styles.CaptionWidth}>
-                Está é uma deliciosa pizza, feita com tudo o quê há de bom para que você encha o seu buchinho
+                {recipes.description}
             </Caption>
 
             <View style={styles.buttonStyle}>

@@ -34,7 +34,7 @@ const Recipes: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.Container}>
-      <Title style={styles.pageTitle}>Lista de receitas</Title>
+      <Title style={styles.pageTitle}>Recipes List</Title>
         <FlatList 
           style={{marginBottom: 64}}
           keyExtractor={(recipe => recipe.id)} 
