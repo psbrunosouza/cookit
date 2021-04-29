@@ -1,7 +1,9 @@
+// CORE
 import "react-native-gesture-handler";
-import React, { useCallback } from "react";
-import { useNavigation } from "@react-navigation/core";
+import React, { useCallback, useEffect } from "react";
+// ID GENERATOR
 import { v4 } from "uuid";
+// COMPONENTS
 import { Picker } from "@react-native-picker/picker";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -13,12 +15,25 @@ import {
   Checkbox,
   Caption,
 } from "react-native-paper";
+// MODELS
 import { IRecipes } from "../../models/Recipe";
 import { IIngredient } from "../../models/Ingredient";
 import { IStep } from "../../models/Step";
-import { RecipeService } from "../../services/RecipeService";
 
-const CreateRecipe: React.FC = () => {
+import * as yup from "yup";
+// SERVICES
+import { RecipeService } from "../../services/RecipeService";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+
+type RouteStackProp = RouteProp<any, any>;
+
+type Props = {
+  // navigation: CreateIngredientStackProp
+  route: RouteStackProp;
+};
+
+const EditRecipe: React.FC<Props> = ({ route }) => {
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
   const [id, setId] = React.useState<string>("");
   const [buttonLabel, setButtonLabel] = React.useState<string>("next");
   const [title, setTitle] = React.useState<string>("");
@@ -33,33 +48,48 @@ const CreateRecipe: React.FC = () => {
     "dinner",
     "dessert",
   ]);
+  const [categories, setCategories] = React.useState<string[]>([
+    "vegan",
+    "japanese",
+    "brazilian",
+    "arabian",
+    "diet",
+  ]);
 
   const navigation = useNavigation();
 
+  useEffect(() => {
+    setRecipe(route.params?.recipe);
+    if(route.params?.recipe){
+      setId(recipe.id);
+      setTitle(recipe.title);
+      setDescription(recipe.description);
+      setImagePath(recipe.imagePath);
+      setCategory(recipe.category);
+      setMealCategory(recipe.mealCategory);
+      setPortions(recipe.portions as unknown as string);
+    }
+  }, [recipe]);
+
   const addRecipe = useCallback(() => {
     const service = new RecipeService();
-    const id = v4();
-    const ingredients: IIngredient[] = [];
-    const steps: IStep[] = [];
 
     const item: IRecipes = {
       id,
       title: title,
       description: description,
       imagePath: imagePath,
-      portions: parseInt(portions),
+      portions: Number.parseInt(portions),
       category: category,
       favorite: false,
       timeToPrepare: 0,
       mealCategory: mealCategory,
-      ingredients,
-      steps,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps
     };
     setId(id);
     setButtonLabel("confirm");
-    service.create("@recipe", item).then((response) => {
-      return response;
-    });
+    service.update(id, item);
   }, [
     id,
     buttonLabel,
@@ -200,7 +230,7 @@ const CreateRecipe: React.FC = () => {
               }
 
               if (buttonLabel === "confirm") {
-                navigation.navigate("addIngredient", { id: id });
+                navigation.navigate("EditIngredient", { recipe: recipe });
                 setButtonLabel("next");
               }
             }}
@@ -271,4 +301,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateRecipe;
+export default EditRecipe;

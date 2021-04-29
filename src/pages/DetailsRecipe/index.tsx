@@ -1,132 +1,156 @@
-import React, { useState, useEffect } from "react";
-import { Title, Caption, Surface, IconButton, Card, Paragraph, Divider} from "react-native-paper";
-import { View, ScrollView, StyleSheet, Image, FlatList} from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Title,
+  Caption,
+  Surface,
+  IconButton,
+  Card,
+  Paragraph,
+  Divider,
+} from "react-native-paper";
+import { View, ScrollView, StyleSheet, Image, FlatList } from "react-native";
 import { ShowIngredients } from "../ShowIngredients";
-import { RouteProp } from "@react-navigation/native";
-import { Ingredient } from "../../models/Ingredient";
-import {Step} from "../../models/Step";
-import { RecipesProps } from "../../models/Recipe";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import { IIngredient } from "../../models/Ingredient";
+import { IStep } from "../../models/Step";
+import { IRecipes } from "../../models/Recipe";
+import { RecipeService } from "../../services/RecipeService";
 
 type Props = {
-    route: RouteProp<any, any>
+  route: RouteProp<any, any>;
 };
 
-const DetailsRecipe:React.FC<Props> = ({route}) => {
-    
-    const[counter, setCounter] = useState(1);
-    const[ingredients, setIngredients] = useState<Ingredient[]>([]);
-    const[recipes, setRecipes] = useState<RecipesProps>({} as RecipesProps);
-    const[steps, setSteps] = useState<Step[]>([]);
+const DetailsRecipe: React.FC<Props> = ({ route }) => {
+  const [id, setId] = useState<string>("");
+  const [recipe, setRecipe] = useState<IRecipes>();
+  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
+  const [steps, setSteps] = useState<IStep[]>([]);
 
-    useEffect(() => {
-        setIngredients(route.params?.recipe.ingredients)
-        setRecipes(route.params?.recipe)
-        setSteps(route.params?.recipe.steps)
-    }, [ingredients, steps])
+  useEffect(() => {
+    setRecipe(route.params?.recipe);
+    setSteps(route.params?.recipe.steps);
+    setIngredients(route.params?.recipe.ingredients);
+    setId(recipe?.id as string)
+  }, [recipe, ingredients, steps, id]);
 
+  const removeRecipe = useCallback((id: string) => {
+    const service = new RecipeService();
+    service.remove(id);
+  }, [id]);
 
-    return (
-        
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-        
-            <View style={styles.imgContainer}>
-                <Image style={styles.imgStyle} source={{uri:recipes.imagePath}}></Image>
-            </View>
-                    
-            <Title style={styles.titleStyle}>{recipes.title}</Title>  
+  const navigation = useNavigation();
 
-            <Caption style={styles.CaptionWidth}>
-                {recipes.description}
-            </Caption>
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.imgContainer}>
+        <Image
+          style={styles.imgStyle}
+          source={{
+            uri: recipe?.imagePath,
+          }}
+        ></Image>
+      </View>
 
-            <View style={styles.buttonStyle}>
-                <Surface style={styles.surface}>
-                    <IconButton color='#4889eb' icon="square-edit-outline"></IconButton>
-                </Surface>
+      <Title style={styles.titleStyle}>{recipe?.title}</Title>
 
-                <Surface style={styles.surface}>
-                    <IconButton onPress={() => console.log('Deletar')}  color='#f71c1c' icon="delete"></IconButton>
-                </Surface>
-            </View>
+      <Caption style={styles.CaptionWidth}>{recipe?.description}</Caption>
 
-            <View>
-                <ShowIngredients ingredients={ingredients}/>
-            </View>
-            <Caption style={styles.CaptionWidth}> Step by step </Caption>
-            <Card style={styles.card}>
-            <FlatList 
-            keyExtractor={step =>step.id} 
-            data={steps} 
-            renderItem={({item:step})=>(
-                <>
-                <Card.Content>
-                {/*<Title>{`Passo #${counter}`}</Title>*/}
-                    <Caption>{`# ${step.description}`}</Caption>
-                </Card.Content>
-                <Divider/>
+      <View style={styles.buttonStyle}>
+        <Surface style={styles.surface}>
+          <IconButton
+            onPress={() => {
+              navigation.navigate("EditRecipe", {recipe});
+            }}
+            color="#4889eb"
+            icon="square-edit-outline"
+          ></IconButton>
+        </Surface>
 
-                </>
-                
-                )}       
-            />
-            </Card>
-      
-        </ScrollView>
-    );
-}
+        <Surface style={styles.surface}>
+          <IconButton
+            onPress={() => {
+              removeRecipe(id);
+              navigation.navigate("Recipes");
+            }}
+            color="#f71c1c"
+            icon="delete"
+          ></IconButton>
+        </Surface>
+      </View>
 
+      <View>
+        <ShowIngredients ingredients={ingredients} />
+      </View>
+      <Caption style={styles.CaptionWidth}> Step by step </Caption>
+      <Card style={styles.card}>
+        <FlatList
+          keyExtractor={(step) => step.id}
+          data={steps}
+          renderItem={({ item: step }) => (
+            <>
+              <Card.Content>
+                <Caption>{`# ${step.description}`}</Caption>
+              </Card.Content>
+              <Divider />
+            </>
+          )}
+        />
+      </Card>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
-    card: {
-        width: 280,
-        marginBottom: 12,
-        padding:6
-      },
+  card: {
+    width: 280,
+    marginBottom: 12,
+    padding: 6,
+  },
 
-    container: {
-      alignItems: 'center'
-    },
+  container: {
+    alignItems: "center",
+  },
 
-    scrollContainer: {
-        width: '100%',
-        alignItems: 'center',
-    },
+  scrollContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
 
-    imgStyle: {
-        width: '100%',
-        height: '100%',
-    },
+  imgStyle: {
+    width: "100%",
+    height: "100%",
+  },
 
-    imgContainer: {
-        width: '100%',
-        height: 260,
-    },
+  imgContainer: {
+    width: "100%",
+    height: 260,
+  },
 
-    CaptionWidth: {
-        width: 240,
-        textAlign: 'center'
-    },
+  CaptionWidth: {
+    width: 240,
+    textAlign: "center",
+  },
 
-    titleStyle: { 
-        marginTop: 10
-    },
+  titleStyle: {
+    marginTop: 10,
+  },
 
-    surface: {
-        padding: 8,
-        height: 60,
-        width: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 6,
-        marginRight: 5,
-        marginLeft: 5,
-        marginTop: 15,
-        marginBottom: 7
-      },
+  surface: {
+    padding: 8,
+    height: 60,
+    width: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 6,
+    marginRight: 5,
+    marginLeft: 5,
+    marginTop: 15,
+    marginBottom: 7,
+  },
 
-      buttonStyle: {
-        flexDirection: 'row'
-      }
-})
+  buttonStyle: {
+    flexDirection: "row",
+  },
+});
 
 export default DetailsRecipe;

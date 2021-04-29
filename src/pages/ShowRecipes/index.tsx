@@ -1,32 +1,32 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import { RecipeService } from '../../services/RecipeService'
-import { RecipesProps } from '../../models/Recipe' 
+import { IRecipes } from '../../models/Recipe'
 
 // NATIVE COMPONENTS
-import { 
-  StyleSheet, 
-  ScrollView, 
-  FlatList,  
+import {
+  StyleSheet,
+  ScrollView,
+  FlatList,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { 
-  Card, 
-  Title, 
-  Paragraph, 
-  Button, 
+import {
+  Card,
+  Title,
+  Paragraph,
+  Button,
   Caption,
 } from 'react-native-paper';
 
 
 const Recipes: React.FC = () => {
-  const [recipes, setRecipes] = React.useState<RecipesProps[]>([])
+  const [recipes, setRecipes] = React.useState<IRecipes[]>([])
   const navigation = useNavigation();
-  
+
   React.useEffect(() =>  {
-    const recipeService = new RecipeService()
+    const recipeService = new RecipeService();
     recipeService.show().then((response) => {
        setRecipes(response)
     });
@@ -34,11 +34,11 @@ const Recipes: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.Container}>
-      <Title style={styles.pageTitle}>Recipes List</Title>
-        <FlatList 
+      <Title style={styles.pageTitle}>Lista de receitas</Title>
+        <FlatList
           style={{marginBottom: 64}}
-          keyExtractor={(recipe => recipe.id)} 
-          data={recipes} 
+          keyExtractor={(recipe => recipe.id)}
+          data={recipes}
           renderItem={({ item:recipe }) => (
             <Card style={styles.card}>
               <Card.Cover source={{ uri: `${recipe.imagePath}` }} />
@@ -48,7 +48,7 @@ const Recipes: React.FC = () => {
               </Card.Content>
 
               <Card.Content>
-              
+
               <Caption>Ingredients</Caption>
               <FlatList
                 style={styles.ingredientsList}
@@ -58,12 +58,12 @@ const Recipes: React.FC = () => {
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
               />
-            
+
               </Card.Content>
 
               <Card.Actions>
                 <Button onPress={() => navigation
-                    .navigate("Details Recipe", {recipe: recipe})}>
+                    .navigate("DetailsRecipe", {recipe: recipe})}>
                     See more
                 </Button>
               </Card.Actions>
