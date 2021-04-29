@@ -29,7 +29,8 @@ type Props = {
   route: RouteProp<any, any>;
 };
 
-const CreateSteps: React.FC<Props> = ({ route }) => {
+const EditSteps: React.FC<Props> = ({ route }) => {
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
   const [recipeId, setRecipeId] = React.useState<string>("");
   const [steps, setSteps] = React.useState<IStep[]>([]);
   const [step, setStep] = React.useState<string>("");
@@ -47,8 +48,10 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    setRecipeId(route.params?.id);
-  }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
+    setRecipe(route.params?.recipe);
+    setSteps(recipe?.steps)
+    setRecipeId(recipe?.id);
+  }, [recipeId, recipe]);
 
   const addStep = useCallback(() => {
     const item: IStep = {
@@ -62,25 +65,23 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
     };
 
     setSteps([...steps, item]);
-    setStep("");
-    setDescription(""), setTimeToPrepare(""), setMethod(""), setTemperature("");
+    // setStep("");
+    // setDescription("");
+    // setTimeToPrepare("");
+    // setMethod("");
+    // setTemperature("");
   }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
 
   const createNewSteps = useCallback(() => {
     const service = new StepService();
-    const recipeService = new RecipeService();
-
-    service.create("@recipe", steps);
-    recipeService.replace("@recipe", recipeId).then((response) => {
-      return response
-    });
+    service.update(recipeId, steps);
   }, [steps, recipeId]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Title style={styles.pageTitle}>Add new recipe</Title>
 
-      {steps.length !== 0 && (
+      {steps?.length !== 0 && (
         <Card style={styles.card}>
           <FlatList
             keyExtractor={(step) => step.id}
@@ -269,4 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { CreateSteps };
+export { EditSteps };
