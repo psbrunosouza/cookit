@@ -1,32 +1,74 @@
-import { RecipesProps } from '../models/Recipe'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IRecipes } from "../models/Recipe";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class RecipeService {
+  async create(id: string, recipe: IRecipes): Promise<void> {
+    try {
+      return await AsyncStorage.setItem(id, JSON.stringify(recipe));
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-    async create(recipe: RecipesProps): Promise<void> {
-        try {
-            await AsyncStorage.setItem(recipe.id, JSON.stringify(recipe));
-        } catch (e) {
-            console.log(e);
-        }
+  async update(id: string, recipe: IRecipes): Promise<void> {
+    if(this.findById(id)){
+      try {
+        return await AsyncStorage.setItem(id, JSON.stringify(recipe));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  async findById(id: string): Promise<IRecipes> {
+    let recipe: IRecipes = {} as IRecipes;
+
+    try {
+      if(await AsyncStorage.getItem(id) !== null){
+        const object = await AsyncStorage.getItem(id);
+        recipe = JSON.parse(object as string);
+      }
+    } catch (e) {
+      console.log(e);
     }
 
-    async show(): Promise<RecipesProps[]> {
-        let object: RecipesProps[] = [];
+    return recipe;
+  }
 
-        try {
-            await AsyncStorage.getAllKeys().then(async keys => {
-                await AsyncStorage.multiGet(keys).then(key => {
-                    key.forEach(data => {
-                        object.push(JSON.parse(data[1] as string)); //values
-                    });
-                });
+  async replace(from: string, to: string): Promise<void>{
+    const object: IRecipes = await this.findById(from);
+    await this.create(to, object);
+    await this.remove('@recipe');
+  }
+
+  async show(): Promise<IRecipes[]> {
+    let object: IRecipes[] = [];
+
+    if ((await AsyncStorage.getAllKeys()) !== null) {
+      try {
+        await AsyncStorage.getAllKeys().then(async (keys) => {
+          if (keys[0] !== "@recipe") {
+            await AsyncStorage.multiGet(keys).then((key) => {
+              key.forEach((data) => {
+                object.push(JSON.parse(data[1] as string)); //values
+              });
             });
-        } catch (e) {
-            console.log(e);
-        }
-
-        return object;
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
+
+    return object;
+  }
+
+  async remove(id: string): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(id);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
-export { RecipeService }
+export { RecipeService };
