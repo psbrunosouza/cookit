@@ -1,18 +1,16 @@
-import React from 'react';
+import React from "react";
 
 // STRUCTURE
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Caption, DataTable } from 'react-native-paper'; 
-import {Ingredient} from '../../models/Ingredient';
+import { View, StyleSheet, FlatList } from "react-native";
+import { Caption, DataTable } from "react-native-paper";
+import { IIngredient } from "../../models/Ingredient";
 
 type Props = {
-  ingredients: Ingredient[];
+  ingredients: IIngredient[];
 };
 
-const ShowIngredients: React.FC<Props> = ({ingredients}) => {
-
+const ShowIngredients: React.FC<Props> = ({ ingredients }) => {
   return (
-
     <View style={styles.ingredientContainer}>
       <Caption style={styles.ingredientsTitle}>Ingredients</Caption>
       <DataTable style={styles.ingredientsTable}>
@@ -22,27 +20,26 @@ const ShowIngredients: React.FC<Props> = ({ingredients}) => {
         </DataTable.Header>
 
         <FlatList
-          keyExtractor={ingredients => ingredients.id}
+          keyExtractor={(ingredients) => ingredients.id}
           data={ingredients}
-          renderItem={({item}) => 
-            (
-              <DataTable.Row>
-                <DataTable.Cell>
-                  <Caption style={styles.ingredientsTableRow}>
-                    {item.name}
-                  </Caption>
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  <Caption style={styles.ingredientsTableRow}>{item.quantity}</Caption>
-                </DataTable.Cell>
-              </DataTable.Row>
-            )
-          }
+          renderItem={({ item }) => (
+            <DataTable.Row>
+              <DataTable.Cell>
+                <Caption style={styles.ingredientsTableRow}>
+                  {item.name}
+                </Caption>
+              </DataTable.Cell>
+              <DataTable.Cell numeric>
+                <Caption style={styles.ingredientsTableRow}>
+                  {item.quantity} {item.unitMeasurement}
+                </Caption>
+              </DataTable.Cell>
+            </DataTable.Row>
+          )}
         />
-    
       </DataTable>
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -53,19 +50,18 @@ const styles = StyleSheet.create({
 
   ingredientsTitle: {
     marginTop: 10,
-    textAlign: 'center'
+    textAlign: "center",
   },
 
   ingredientsTable: {
     width: 260,
-    marginBottom: 12
+    marginBottom: 12,
   },
 
   ingredientsTableRow: {
-    color: '#aaaaaa',
-    fontStyle: 'italic'
-  }
-  
+    color: "#aaaaaa",
+    fontStyle: "italic",
+  },
 });
 
-export {ShowIngredients}
+export { ShowIngredients };

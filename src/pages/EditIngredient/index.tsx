@@ -1,7 +1,5 @@
-// CORE
 import React, { useEffect, useCallback } from "react";
-// STRUCTURE
-import { View, ScrollView, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import {
   TextInput,
   Title,
@@ -11,7 +9,6 @@ import {
   Card,
   Paragraph,
   Divider,
-
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
@@ -19,6 +16,7 @@ import { v4 } from "uuid";
 import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { IngredientService } from "../../services/IngredientService";
+import { IRecipes } from "../../models/Recipe";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -26,8 +24,9 @@ type Props = {
   route: RouteStackProp;
 };
 
-const CreateIngredient: React.FC<Props> = ({ route }) => {
+const EditIngredient: React.FC<Props> = ({ route }) => {
   const [recipeId, setRecipeId] = React.useState("");
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
   const [ingredients, setIngredients] = React.useState<IIngredient[]>([]);
   const [name, setName] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
@@ -38,16 +37,11 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    setRecipeId(route.params?.id);
-  }, [
-    ingredients,
-    recipeId,
-    name,
-    quantity,
-    withoutLactose,
-    measurementUnit,
-    withoutGluten,
-  ]);
+    setRecipe(route.params?.recipe);
+    setRecipeId(recipe.id);
+    setIngredients(recipe.ingredients);
+    console.log(recipeId);
+  }, [recipe, recipeId]);
 
   const addIngredient = useCallback(() => {
     const item: IIngredient = {
@@ -63,17 +57,16 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
     setIngredients([...ingredients, item]);
   }, [
     ingredients,
-    recipeId,
     name,
     quantity,
-    withoutLactose,
     measurementUnit,
+    withoutLactose,
     withoutGluten,
   ]);
 
   const createNewIngredients = useCallback(() => {
     const service = new IngredientService();
-    service.create("@recipe", ingredients).then((response) => {
+    service.update(recipe.id, ingredients).then((response) => {
       return response;
     });
   }, [ingredients]);
@@ -83,7 +76,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
       <View style={styles.formView}>
         <Title style={styles.pageTitle}>Create Ingredient</Title>
 
-        {ingredients.length !== 0 && (
+        {ingredients?.length !== 0 && (
           <Card style={styles.card}>
             <FlatList
               keyExtractor={(ingredient) => ingredient.id}
@@ -107,9 +100,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
                         : "sem lactose"}
                     </Paragraph>
                     <Paragraph>
-                      {ingredient.withoutGluten
-                        ? "com gluten"
-                        : "sem gluten"}
+                      {ingredient.withoutGluten ? "com gluten" : "sem gluten"}
                     </Paragraph>
                   </Card.Content>
                   <Divider />
@@ -196,7 +187,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
           <Button
             onPress={() => {
               createNewIngredients();
-              navigation.navigate("CreateSteps", { id: recipeId });
+              navigation.navigate("EditSteps", { recipe });
             }}
             style={styles.buttonNext}
             mode="contained"
@@ -288,4 +279,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { CreateIngredient };
+export { EditIngredient };
