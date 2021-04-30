@@ -11,11 +11,14 @@ O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita,
 <p align="center">Bruno Pinheiro de Souza</p>
 <p align="center">William dos Santos Santos</p>
 
-### Receita - William
-CREATE-RECIPE
-EDIT-RECIPE
-SHOW-RECIPES
-DELETE-RECIPE
+<h3 align="center">Recipe page - William</h3>
+<p align="center">CREATE-RECIPE</p>
+<p align="center">EDIT-RECIPE</p>
+<p align="center">SHOW-RECIPES</p>
+<p align="center">DELETE-RECIPE</p>
+
+
+
 
 SHOW-DETAILED-RECIPES
 
