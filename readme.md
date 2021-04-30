@@ -7,7 +7,7 @@ O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita,
 </p>
 
 <h2 align="center">Membros</h2>
-<p align="center">Anderson</p>
+<p align="center">Anderson Barbosa Apolinario</p>
 <p align="center">Bruno Pinheiro de Souza</p>
 <p align="center">William dos Santos Santos</p>
 
