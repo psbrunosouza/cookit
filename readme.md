@@ -2,7 +2,7 @@
 
 ### Introdução
 
-<p align="center">
+<p align="left">
 O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita, com imagem, título descrição, etc. Sua lista de ingredientes e o passo a passo para realizar aquela receita. 
 </p>
 <a href="https://www.youtube.com/watch?v=TtyS0m4nP34">Video de apresentação do projeto</a>
