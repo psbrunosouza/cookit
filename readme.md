@@ -4,7 +4,7 @@
 O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita, com imagem, título descrição, etc. Sua lista de ingredientes e o passo a passo para realizar aquela receita. 
 
 ### Membros
-Bruno Pinheiro de Souza
+<p align="center">Bruno Pinheiro de Souza</p>
 William dos Santos Santos
 Anderson
 
