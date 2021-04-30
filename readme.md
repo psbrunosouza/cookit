@@ -43,6 +43,7 @@ O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita,
 <h2 align="center">Dependências</h2>
 <p align="center">Validação - YUP</p>
 <p align="center">Alguns Componentes - React native paper</p>
+<p align="center">React native picker</p>
 
 
 
