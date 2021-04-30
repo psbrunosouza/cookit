@@ -32,12 +32,13 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
     setRecipe(route.params?.recipe);
     setSteps(route.params?.recipe.steps);
     setIngredients(route.params?.recipe.ingredients);
-
+    if(recipe){
+      setId(recipe.id);
+    }
     service.getTimeToPrepare(id).then((response) => {
       setTimeToPrepare(response)
     });
 
-    setId(recipe?.id as string)
   }, [recipe, ingredients, steps, id, timeToPrepare]);
 
   const removeRecipe = useCallback((id: string) => {
