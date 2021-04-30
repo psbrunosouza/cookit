@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 import { Picker } from "@react-native-picker/picker";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import * as yup from "yup";
 import {
   TextInput,
   Button,
@@ -17,6 +18,8 @@ import { IRecipes } from "../../models/Recipe";
 import { IIngredient } from "../../models/Ingredient";
 import { IStep } from "../../models/Step";
 import { RecipeService } from "../../services/RecipeService";
+import getValidationErrors from "../../utils/getValidationErrors";
+import { Errors } from "../../models/Errors";
 
 const CreateRecipe: React.FC = () => {
   const [id, setId] = React.useState<string>("");
@@ -27,6 +30,7 @@ const CreateRecipe: React.FC = () => {
   const [portions, setPortions] = React.useState<string>("");
   const [category, setCategory] = React.useState<string>("brazilian");
   const [mealCategory, setMealCategory] = React.useState<string>("lunch");
+  const [errors, setErrors] = React.useState<Errors>({} as Errors);
   const [mealCategories, setMealCategories] = React.useState<string[]>([
     "lunch",
     "breakfast",
@@ -41,7 +45,6 @@ const CreateRecipe: React.FC = () => {
     const id = v4();
     const ingredients: IIngredient[] = [];
     const steps: IStep[] = [];
-
     const item: IRecipes = {
       id,
       title: title,
@@ -55,11 +58,10 @@ const CreateRecipe: React.FC = () => {
       ingredients,
       steps,
     };
+
     setId(id);
     setButtonLabel("confirm");
-    service.create("@recipe", item).then((response) => {
-      return response;
-    });
+    service.create("@recipe", item).then();
   }, [
     id,
     buttonLabel,
@@ -69,14 +71,13 @@ const CreateRecipe: React.FC = () => {
     portions,
     category,
     mealCategory,
+    errors,
   ]);
 
   const removeRecipe = useCallback(
     (id: string) => {
       const service = new RecipeService();
-      service.remove(id).then((response) => {
-        return response;
-      });
+      service.remove(id).then();
     },
     [
       id,
@@ -97,43 +98,44 @@ const CreateRecipe: React.FC = () => {
       <View style={styles.viewStyle}>
         <TextInput
           style={styles.textInput}
-          label="Name"
-          placeholder="Recipe name"
+          label="Recipe name"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setTitle(value)}
           value={title}
         />
 
+        {errors.title && <Text style={styles.erroText}>{errors.title}</Text>}
+
         <TextInput
           style={styles.textInput}
           label="Description"
-          placeholder="Two tomatoes, 1 cup of soup, 3 bowls of sugar"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setDescription(value)}
           value={description}
         />
+        {errors.description && <Text style={styles.erroText}>{errors.description}</Text>}
 
         <TextInput
           style={styles.textInput}
-          label="imagePath"
-          placeholder="www.unsplash/image"
+          label="Image url"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setImagePath(value)}
           value={imagePath}
         />
+        {errors.imagePath && <Text style={styles.erroText}>{errors.imagePath}</Text>}
 
         <TextInput
           style={styles.textInput}
-          label="portions"
-          placeholder="4"
+          label="Portions"
           keyboardType="number-pad"
           mode="outlined"
           onChangeText={(value) => setPortions(value)}
           value={portions}
         />
+        {errors.portions && <Text style={styles.erroText}>{errors.portions}</Text>}
 
         <View style={styles.pickerContainer}>
           <Picker
@@ -196,10 +198,49 @@ const CreateRecipe: React.FC = () => {
           <Button
             onPress={() => {
               if (buttonLabel === "next") {
-                addRecipe();
+                const schema = yup.object().shape({
+                  title: yup.string().min(5).required("field required"),
+                  description: yup.string().required("field required"),
+                  imagePath: yup.string().url().required("field required"),
+                  portions: yup
+                    .number()
+                    .required("field required"),
+                  category: yup.string().required("field required"),
+                  mealCategory: yup.string().required("field required"),
+                });
+
+                schema
+                  .validate(
+                    {
+                      title,
+                      description,
+                      imagePath,
+                      portions,
+                      category,
+                      mealCategory,
+                    },
+                    {
+                      abortEarly: false,
+                    }
+                  )
+                  .then(() => {
+                    addRecipe();
+                  })
+                  .catch((e) => {
+                    if (e instanceof yup.ValidationError) {
+                      const errors = getValidationErrors(e);
+                      setErrors(errors);
+                    }
+                  });
               }
 
               if (buttonLabel === "confirm") {
+                setTitle("");
+                setDescription("");
+                setImagePath("");
+                setPortions("");
+                setCategory("brazilian");
+                setMealCategory("lunch");
                 navigation.navigate("addIngredient", { id: id });
                 setButtonLabel("next");
               }
@@ -268,6 +309,12 @@ const styles = StyleSheet.create({
     marginTop: 18,
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  erroText: {
+    color: "#db2e2e",
+    textAlign: "center",
+    width: '80%'
   },
 });
 

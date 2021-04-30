@@ -1,6 +1,4 @@
-// CORE
 import React, { useCallback, useEffect } from "react";
-// COMPONENTS
 import { View, StyleSheet, ScrollView } from "react-native";
 import {
   TextInput,
@@ -12,18 +10,18 @@ import {
   Card,
   Paragraph,
   Divider,
+  IconButton,
 } from "react-native-paper";
 import { v4 } from "uuid";
-// MODELS
 import { IStep } from "../../models/Step";
 import { IRecipes } from "../../models/Recipe";
-
-// NAVIGATION
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
 import { StepService } from "../../services/StepService";
-import { RecipeService } from "../../services/RecipeService";
+import getValidationErrors from "../../utils/getValidationErrors";
+import * as yup from "yup";
+import { Errors } from "../../models/Errors";
 
 type Props = {
   route: RouteProp<any, any>;
@@ -34,6 +32,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   const [recipeId, setRecipeId] = React.useState<string>("");
   const [steps, setSteps] = React.useState<IStep[]>([]);
   const [step, setStep] = React.useState<string>("");
+  const [errors, setErrors] = React.useState<Errors>({} as Errors);
   const [description, setDescription] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("bake");
   const [temperature, setTemperature] = React.useState<string>("low");
@@ -49,7 +48,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
 
   useEffect(() => {
     setRecipe(route.params?.recipe);
-    setSteps(recipe?.steps)
+    setSteps(recipe?.steps);
     setRecipeId(recipe?.id);
   }, [recipeId, recipe]);
 
@@ -64,49 +63,106 @@ const EditSteps: React.FC<Props> = ({ route }) => {
       recipeId: recipeId,
     };
 
-    setSteps([...steps, item]);
-    // setStep("");
-    // setDescription("");
-    // setTimeToPrepare("");
-    // setMethod("");
-    // setTemperature("");
-  }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
+    const schema = yup.object().shape({
+      description: yup.string().min(5).required("field required"),
+      step: yup.number().required("field required"),
+      timeToPrepare: yup.number().required("field required"),
+    });
+
+    schema
+      .validate(
+        {
+          step,
+          description,
+          timeToPrepare,
+        },
+        {
+          abortEarly: false,
+        }
+      )
+      .then(() => {
+        setSteps([...steps, item]);
+        setStep("");
+        setDescription("");
+        setTimeToPrepare("");
+        setMethod("");
+        setTemperature("none");
+      })
+      .catch((e) => {
+        if (e instanceof yup.ValidationError) {
+          const errors = getValidationErrors(e);
+          setErrors(errors);
+        }
+      });
+  }, [
+    errors,
+    steps,
+    recipeId,
+    step,
+    description,
+    timeToPrepare,
+    method,
+    temperature,
+  ]);
 
   const createNewSteps = useCallback(() => {
     const service = new StepService();
     service.update(recipeId, steps);
   }, [steps, recipeId]);
 
+  const deleteStep = useCallback(
+    (id: string) => {
+      const stepsUpdated = steps.filter((step) => {
+        return step.id !== id;
+      });
+      setSteps(stepsUpdated);
+    },
+    [steps]
+  );
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Title style={styles.pageTitle}>Add new recipe</Title>
+      <Title style={styles.pageTitle}>Edit steps</Title>
 
       {steps?.length !== 0 && (
-        <Card style={styles.card}>
-          <FlatList
-            keyExtractor={(step) => step.id}
-            data={steps}
-            renderItem={({ item: step }) => (
-              <>
-                <Card.Content>
-                  <View
+        <FlatList
+          keyExtractor={(step) => step.id}
+          style={styles.cardList}
+          data={steps}
+          renderItem={({ item: step }) => (
+            <Card style={styles.card}>
+              <Card.Content>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Paragraph
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      color: "#2a7ecc",
+                      fontSize: 16,
+                      fontWeight: "bold",
                     }}
-                  >
-                    <Paragraph>{`Step: ${step.step}`}</Paragraph>
-                    <Paragraph>{`Time: ${step.timeToPrepare}-min`}</Paragraph>
-                  </View>
-                  <Paragraph>{`Method: ${step.method}`}</Paragraph>
-                  <Paragraph>{step.description}</Paragraph>
-                </Card.Content>
-                <Divider />
-              </>
-            )}
-          />
-        </Card>
+                  >{`Step: ${step.step}`}</Paragraph>
+                  <Paragraph
+                    style={{ fontSize: 16, fontWeight: "bold" }}
+                  >{`Time: ${step.timeToPrepare}-min`}</Paragraph>
+                </View>
+                <Paragraph>{`Method: ${step.method}`}</Paragraph>
+                <Paragraph>{step.description}</Paragraph>
+                <IconButton
+                  style={styles.deleteButtom}
+                  icon="delete"
+                  color={"#da454d"}
+                  size={20}
+                  onPress={() => deleteStep(step.id)}
+                />
+              </Card.Content>
+            </Card>
+          )}
+        />
       )}
 
       <TextInput
@@ -118,6 +174,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         onChangeText={(value) => setStep(value)}
         value={step}
       />
+      {errors.step && <Text style={styles.erroText}>{errors.step}</Text>}
 
       <TextInput
         style={styles.textInput}
@@ -128,6 +185,9 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         onChangeText={(value) => setDescription(value)}
         value={description}
       />
+      {errors.description && (
+        <Text style={styles.erroText}>{errors.description}</Text>
+      )}
 
       <TextInput
         style={styles.textInput}
@@ -138,6 +198,9 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         onChangeText={(value) => setTimeToPrepare(value)}
         value={timeToPrepare}
       />
+      {errors.timeToPrepare && (
+        <Text style={styles.erroText}>{errors.timeToPrepare}</Text>
+      )}
 
       <View style={styles.pickerContainer}>
         <Picker
@@ -206,7 +269,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
             createNewSteps();
             navigation.navigate("Recipes");
           }}
-          style={styles.buttonStyle}
+          style={styles.buttonAdd}
           mode="contained"
           compact={false}
         >
@@ -237,11 +300,19 @@ const styles = StyleSheet.create({
     width: "80%",
   },
 
-  card: {
+  cardList: {
     width: "80%",
-    padding: 12,
+  },
+
+  card: {
+    width: "100%",
     marginBottom: 12,
-    marginTop: 12,
+  },
+
+  deleteButtom: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
   },
 
   buttonTextStyle: {
@@ -267,6 +338,18 @@ const styles = StyleSheet.create({
   buttonStyle: {
     width: "100%",
     marginTop: 12,
+  },
+
+  buttonAdd: {
+    width: "100%",
+    marginTop: 12,
+    marginBottom: 56,
+  },
+
+  erroText: {
+    color: "#db2e2e",
+    textAlign: "center",
+    width: "80%",
   },
 });
 

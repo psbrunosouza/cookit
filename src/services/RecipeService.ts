@@ -1,5 +1,6 @@
 import { IRecipes } from "../models/Recipe";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IStep } from "../models/Step";
 
 class RecipeService {
   async create(id: string, recipe: IRecipes): Promise<void> {
@@ -70,5 +71,25 @@ class RecipeService {
       console.log(e);
     }
   }
+
+  async getTimeToPrepare(id: string): Promise<number> {
+    let recipe: IRecipes = {} as IRecipes;
+    let time = 0;
+
+    try {
+      if(await AsyncStorage.getItem(id) !== null){
+        const object = await AsyncStorage.getItem(id);
+        recipe = JSON.parse(object as string);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    recipe.steps?.map((step) => {
+      time += step.timeToPrepare;
+    });
+
+    return time;
+  } 
 }
 export { RecipeService };

@@ -9,6 +9,7 @@ import {
   Card,
   Paragraph,
   Divider,
+  IconButton,
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
@@ -17,6 +18,9 @@ import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { IngredientService } from "../../services/IngredientService";
 import { IRecipes } from "../../models/Recipe";
+import getValidationErrors from "../../utils/getValidationErrors";
+import * as yup from "yup";
+import { Errors } from "../../models/Errors";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -30,9 +34,11 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
   const [ingredients, setIngredients] = React.useState<IIngredient[]>([]);
   const [name, setName] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
+
   const [measurementUnit, setMeasurementUnit] = React.useState("g");
   const [withoutLactose, setWithoutLactose] = React.useState<boolean>(false);
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
+  const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
   const navigation = useNavigation();
 
@@ -54,7 +60,35 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
       recipeId: recipeId,
     };
 
-    setIngredients([...ingredients, item]);
+    const schema = yup.object().shape({
+      name: yup.string().min(2).required("field required"),
+      quantity: yup.number().required("field required"),
+    });
+
+    schema
+      .validate(
+        {
+          name,
+          quantity,
+        },
+        {
+          abortEarly: false,
+        }
+      )
+      .then(() => {
+        setIngredients([...ingredients, item]);
+        setName("");
+        setQuantity("");
+        setMeasurementUnit("g");
+        setWithoutGluten(false);
+        setWithoutLactose(false);
+      })
+      .catch((e) => {
+        if (e instanceof yup.ValidationError) {
+          const errors = getValidationErrors(e);
+          setErrors(errors);
+        }
+      });
   }, [
     ingredients,
     name,
@@ -62,6 +96,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
     measurementUnit,
     withoutLactose,
     withoutGluten,
+    errors,
   ]);
 
   const createNewIngredients = useCallback(() => {
@@ -71,43 +106,67 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
     });
   }, [ingredients]);
 
+  const deleteIngredient = useCallback(
+    (id: string) => {
+      const ingredientsUpdated = ingredients.filter((ingredient) => {
+        return ingredient.id !== id;
+      });
+      setIngredients(ingredientsUpdated);
+    },
+    [ingredients]
+  );
+
   return (
     <ScrollView contentContainerStyle={styles.ingredientContainer}>
       <View style={styles.formView}>
-        <Title style={styles.pageTitle}>Create Ingredient</Title>
+        <Title style={styles.pageTitle}>Edit Ingredient</Title>
 
         {ingredients?.length !== 0 && (
-          <Card style={styles.card}>
-            <FlatList
-              keyExtractor={(ingredient) => ingredient.id}
-              data={ingredients}
-              renderItem={({ item: ingredient }) => (
-                <>
-                  <Card.Content>
-                    <View
+          <FlatList
+            style={styles.cardList}
+            keyExtractor={(ingredient) => ingredient.id}
+            data={ingredients}
+            renderItem={({ item: ingredient }) => (
+              <Card style={styles.card}>
+                <Card.Content>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Paragraph
                       style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        color: "#2a7ecc",
+                        fontSize: 16,
+                        fontWeight: "bold",
                       }}
                     >
-                      <Paragraph>{ingredient.name}</Paragraph>
-                      <Paragraph>{`Quantity: ${ingredient.quantity}${ingredient.unitMeasurement}`}</Paragraph>
-                    </View>
-                    <Paragraph>
-                      {ingredient.withoutLactose
-                        ? "com lactose"
-                        : "sem lactose"}
+                      {ingredient.name}
                     </Paragraph>
-                    <Paragraph>
-                      {ingredient.withoutGluten ? "com gluten" : "sem gluten"}
-                    </Paragraph>
-                  </Card.Content>
-                  <Divider />
-                </>
-              )}
-            />
-          </Card>
+                    <Paragraph
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                    >{`Quantity: ${ingredient.quantity}${ingredient.unitMeasurement}`}</Paragraph>
+                  </View>
+                  <Paragraph>
+                    {ingredient.withoutLactose ? "com lactose" : "sem lactose"}
+                  </Paragraph>
+                  <Paragraph>
+                    {ingredient.withoutGluten ? "com gluten" : "sem gluten"}
+                  </Paragraph>
+
+                  <IconButton
+                    style={styles.deleteButtom}
+                    icon="delete"
+                    color={"#da454d"}
+                    size={20}
+                    onPress={() => deleteIngredient(ingredient.id)}
+                  />
+                </Card.Content>
+              </Card>
+            )}
+          />
         )}
 
         <TextInput
@@ -119,6 +178,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
           onChangeText={(value) => setName(value)}
           value={name}
         />
+        {errors.name && <Text style={styles.erroText}>{errors.name}</Text>}
 
         <TextInput
           style={styles.textQuantityInput}
@@ -129,6 +189,9 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
           onChangeText={(value) => setQuantity(value)}
           value={quantity}
         />
+        {errors.quantity && (
+          <Text style={styles.erroText}>{errors.quantity}</Text>
+        )}
 
         <View style={styles.pickerContainer}>
           <Picker
@@ -171,7 +234,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
           <Button
             mode="contained"
             compact={false}
-            style={styles.buttonNext}
+            style={styles.buttonStyle}
             onPress={() => addIngredient()}
           >
             <Text style={styles.buttonTextStyle}>Add</Text>
@@ -189,7 +252,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
               createNewIngredients();
               navigation.navigate("EditSteps", { recipe });
             }}
-            style={styles.buttonNext}
+            style={styles.buttonAdd}
             mode="contained"
             compact={false}
           >
@@ -215,10 +278,8 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    width: "80%",
-    padding: 12,
+    width: "100%",
     marginBottom: 12,
-    marginTop: 12,
   },
 
   textInput: {
@@ -239,18 +300,14 @@ const styles = StyleSheet.create({
   },
 
   buttonStyle: {
-    width: "80%",
-    marginTop: 12,
-  },
-
-  buttonNext: {
     width: "100%",
     marginTop: 12,
   },
 
-  buttonBack: {
-    width: "45%",
+  buttonAdd: {
+    width: "100%",
     marginTop: 12,
+    marginBottom: 56,
   },
 
   buttonTextStyle: {
@@ -276,6 +333,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 8,
+  },
+
+  cardList: {
+    width: "80%",
+  },
+
+  deleteButtom: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+  },
+
+  erroText: {
+    color: "#db2e2e",
+    textAlign: "center",
+    width: "80%",
   },
 });
 

@@ -25,13 +25,20 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
   const [recipe, setRecipe] = useState<IRecipes>();
   const [ingredients, setIngredients] = useState<IIngredient[]>([]);
   const [steps, setSteps] = useState<IStep[]>([]);
+  const [timeToPrepare, setTimeToPrepare] = useState<number>(0);
+  const service = new RecipeService();
 
   useEffect(() => {
     setRecipe(route.params?.recipe);
     setSteps(route.params?.recipe.steps);
     setIngredients(route.params?.recipe.ingredients);
+
+    service.getTimeToPrepare(id).then((response) => {
+      setTimeToPrepare(response)
+    });
+
     setId(recipe?.id as string)
-  }, [recipe, ingredients, steps, id]);
+  }, [recipe, ingredients, steps, id, timeToPrepare]);
 
   const removeRecipe = useCallback((id: string) => {
     const service = new RecipeService();
@@ -52,9 +59,8 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
       </View>
 
       <Title style={styles.titleStyle}>{recipe?.title}</Title>
-
       <Caption style={styles.CaptionWidth}>{recipe?.description}</Caption>
-
+      <Caption style={styles.CaptionWidth}>{`Time to prepare: ${timeToPrepare}min`}</Caption>
       <View style={styles.buttonStyle}>
         <Surface style={styles.surface}>
           <IconButton
@@ -89,7 +95,7 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
           renderItem={({ item: step }) => (
             <>
               <Card.Content>
-                <Caption>{`# ${step.description}`}</Caption>
+                <Caption>{`${step.step} ${step.description}`}</Caption>
               </Card.Content>
               <Divider />
             </>

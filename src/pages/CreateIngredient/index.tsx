@@ -1,7 +1,7 @@
 // CORE
 import React, { useEffect, useCallback } from "react";
 // STRUCTURE
-import { View, ScrollView, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import {
   TextInput,
   Title,
@@ -11,7 +11,7 @@ import {
   Card,
   Paragraph,
   Divider,
-
+  IconButton,
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
@@ -19,6 +19,9 @@ import { v4 } from "uuid";
 import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { IngredientService } from "../../services/IngredientService";
+import * as yup from "yup";
+import getValidationErrors from "../../utils/getValidationErrors";
+import { Errors } from "../../models/Errors";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -34,6 +37,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [measurementUnit, setMeasurementUnit] = React.useState("g");
   const [withoutLactose, setWithoutLactose] = React.useState<boolean>(false);
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
+  const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
   const navigation = useNavigation();
 
@@ -60,7 +64,35 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
       recipeId: recipeId,
     };
 
-    setIngredients([...ingredients, item]);
+    const schema = yup.object().shape({
+      name: yup.string().min(2).required("field required"),
+      quantity: yup.number().required("field required"),
+    });
+
+    schema
+      .validate(
+        {
+          name,
+          quantity,
+        },
+        {
+          abortEarly: false,
+        }
+      )
+      .then(() => {
+        setIngredients([...ingredients, item]);
+        setName("");
+        setQuantity("");
+        setMeasurementUnit("g");
+        setWithoutGluten(false);
+        setWithoutLactose(false);
+      })
+      .catch((e) => {
+        if (e instanceof yup.ValidationError) {
+          const errors = getValidationErrors(e);
+          setErrors(errors);
+        }
+      });
   }, [
     ingredients,
     recipeId,
@@ -73,10 +105,35 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
 
   const createNewIngredients = useCallback(() => {
     const service = new IngredientService();
+
     service.create("@recipe", ingredients).then((response) => {
       return response;
     });
-  }, [ingredients]);
+
+    setName("");
+    setQuantity("");
+    setMeasurementUnit("g");
+    setWithoutGluten(false);
+    setWithoutLactose(false);
+  }, [
+    ingredients,
+    name,
+    quantity,
+    withoutLactose,
+    measurementUnit,
+    withoutGluten,
+    errors,
+  ]);
+
+  const deleteIngredient = useCallback(
+    (id: string) => {
+      const ingredientsUpdated = ingredients.filter((ingredient) => {
+        return ingredient.id !== id;
+      });
+      setIngredients(ingredientsUpdated);
+    },
+    [ingredients]
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.ingredientContainer}>
@@ -84,60 +141,78 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         <Title style={styles.pageTitle}>Create Ingredient</Title>
 
         {ingredients.length !== 0 && (
-          <Card style={styles.card}>
-            <FlatList
-              keyExtractor={(ingredient) => ingredient.id}
-              data={ingredients}
-              renderItem={({ item: ingredient }) => (
-                <>
-                  <Card.Content>
-                    <View
+          <FlatList
+            style={styles.cardList}
+            keyExtractor={(ingredient: { id: string }) => ingredient.id}
+            data={ingredients}
+            renderItem={({ item: ingredient }) => (
+              <Card style={styles.card}>
+                <Card.Content>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Paragraph
                       style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        color: "#2a7ecc",
+                        fontSize: 16,
+                        fontWeight: "bold",
                       }}
                     >
-                      <Paragraph>{ingredient.name}</Paragraph>
-                      <Paragraph>{`Quantity: ${ingredient.quantity}${ingredient.unitMeasurement}`}</Paragraph>
-                    </View>
-                    <Paragraph>
-                      {ingredient.withoutLactose
-                        ? "com lactose"
-                        : "sem lactose"}
+                      {ingredient.name}
                     </Paragraph>
-                    <Paragraph>
-                      {ingredient.withoutGluten
-                        ? "com gluten"
-                        : "sem gluten"}
-                    </Paragraph>
-                  </Card.Content>
-                  <Divider />
-                </>
-              )}
-            />
-          </Card>
+                    <Paragraph
+                      style={{ fontSize: 16, fontWeight: "bold" }}
+                    >{`Quantity: ${ingredient.quantity}${ingredient.unitMeasurement}`}</Paragraph>
+                  </View>
+                  <Paragraph>
+                    {ingredient.withoutLactose
+                      ? "contain lactose"
+                      : "without lactose"}
+                  </Paragraph>
+                  <Paragraph>
+                    {ingredient.withoutGluten
+                      ? "contain gluten"
+                      : "without gluten"}
+                  </Paragraph>
+
+                  <IconButton
+                    style={styles.deleteButtom}
+                    icon="delete"
+                    color={"#da454d"}
+                    size={20}
+                    onPress={() => deleteIngredient(ingredient.id)}
+                  />
+                </Card.Content>
+              </Card>
+            )}
+          />
         )}
 
         <TextInput
           style={styles.textInput}
           label="name"
-          placeholder="name"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setName(value)}
           value={name}
         />
+        {errors.name && <Text style={styles.erroText}>{errors.name}</Text>}
 
         <TextInput
           style={styles.textQuantityInput}
           label="quantity"
           keyboardType="number-pad"
-          placeholder="35"
           mode="outlined"
           onChangeText={(value) => setQuantity(value)}
           value={quantity}
         />
+        {errors.quantity && (
+          <Text style={styles.erroText}>{errors.quantity}</Text>
+        )}
 
         <View style={styles.pickerContainer}>
           <Picker
@@ -148,6 +223,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
             <Picker.Item label="g" value="g" />
             <Picker.Item label="kg" value="kg" />
             <Picker.Item label="ml" value="ml" />
+            <Picker.Item label="L" value="L" />
             <Picker.Item label="cup(s)" value="cup(s)" />
             <Picker.Item label="chunk(s)" value="chunk(s)" />
             <Picker.Item label="unit(s)" value="unit(s)" />
@@ -180,7 +256,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
           <Button
             mode="contained"
             compact={false}
-            style={styles.buttonNext}
+            style={styles.buttonAdd}
             onPress={() => addIngredient()}
           >
             <Text style={styles.buttonTextStyle}>Add</Text>
@@ -196,7 +272,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
           <Button
             onPress={() => {
               createNewIngredients();
-              navigation.navigate("CreateSteps", { id: recipeId });
+              navigation.navigate("CreateSteps", { id: recipeId });             
             }}
             style={styles.buttonNext}
             mode="contained"
@@ -223,11 +299,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  card: {
+  cardList: {
     width: "80%",
-    padding: 12,
+  },
+
+  card: {
+    width: "100%",
     marginBottom: 12,
-    marginTop: 12,
   },
 
   textInput: {
@@ -255,11 +333,11 @@ const styles = StyleSheet.create({
   buttonNext: {
     width: "100%",
     marginTop: 12,
+    marginBottom: 56,
   },
 
-  buttonBack: {
-    width: "45%",
-    marginTop: 12,
+  buttonAdd: {
+    width: "100%",
   },
 
   buttonTextStyle: {
@@ -285,6 +363,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 8,
+  },
+
+  deleteButtom: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+  },
+
+  erroText: {
+    color: "#db2e2e",
+    textAlign: "center",
+    width: "80%",
   },
 });
 

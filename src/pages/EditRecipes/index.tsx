@@ -1,9 +1,5 @@
-// CORE
 import "react-native-gesture-handler";
 import React, { useCallback, useEffect } from "react";
-// ID GENERATOR
-import { v4 } from "uuid";
-// COMPONENTS
 import { Picker } from "@react-native-picker/picker";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -15,20 +11,16 @@ import {
   Checkbox,
   Caption,
 } from "react-native-paper";
-// MODELS
 import { IRecipes } from "../../models/Recipe";
-import { IIngredient } from "../../models/Ingredient";
-import { IStep } from "../../models/Step";
-
-import * as yup from "yup";
-// SERVICES
 import { RecipeService } from "../../services/RecipeService";
 import { RouteProp, useNavigation } from "@react-navigation/native";
+import * as yup from "yup";
+import getValidationErrors from "../../utils/getValidationErrors";
+import { Errors } from "../../models/Errors";
 
 type RouteStackProp = RouteProp<any, any>;
 
 type Props = {
-  // navigation: CreateIngredientStackProp
   route: RouteStackProp;
 };
 
@@ -42,6 +34,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
   const [portions, setPortions] = React.useState<string>("");
   const [category, setCategory] = React.useState<string>("brazilian");
   const [mealCategory, setMealCategory] = React.useState<string>("lunch");
+  const [errors, setErrors] = React.useState<Errors>({} as Errors);
   const [mealCategories, setMealCategories] = React.useState<string[]>([
     "lunch",
     "breakfast",
@@ -60,14 +53,14 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
 
   useEffect(() => {
     setRecipe(route.params?.recipe);
-    if(route.params?.recipe){
+    if (route.params?.recipe) {
       setId(recipe.id);
       setTitle(recipe.title);
       setDescription(recipe.description);
       setImagePath(recipe.imagePath);
       setCategory(recipe.category);
       setMealCategory(recipe.mealCategory);
-      setPortions(recipe.portions as unknown as string);
+      setPortions((recipe.portions as unknown) as string);
     }
   }, [recipe]);
 
@@ -85,7 +78,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
       timeToPrepare: 0,
       mealCategory: mealCategory,
       ingredients: recipe.ingredients,
-      steps: recipe.steps
+      steps: recipe.steps,
     };
     setId(id);
     setButtonLabel("confirm");
@@ -122,48 +115,55 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Title style={styles.pageTitle}>Add new recipe</Title>
+      <Title style={styles.pageTitle}>Edit recipe</Title>
 
       <View style={styles.viewStyle}>
         <TextInput
           style={styles.textInput}
-          label="Name"
-          placeholder="Recipe name"
+          label="Recipe name"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setTitle(value)}
           value={title}
         />
+        {errors.title && <Text style={styles.erroText}>{errors.title}</Text>}
 
         <TextInput
           style={styles.textInput}
           label="Description"
-          placeholder="Two tomatoes, 1 cup of soup, 3 bowls of sugar"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setDescription(value)}
           value={description}
         />
+        {errors.description && (
+          <Text style={styles.erroText}>{errors.description}</Text>
+        )}
 
         <TextInput
           style={styles.textInput}
-          label="imagePath"
-          placeholder="www.unsplash/image"
+          label="Image url"
           keyboardType="default"
           mode="outlined"
           onChangeText={(value) => setImagePath(value)}
           value={imagePath}
         />
+        {errors.imagePath && (
+          <Text style={styles.erroText}>{errors.imagePath}</Text>
+        )}
 
         <TextInput
           style={styles.textInput}
-          label="portions"
+          label="Portions"
           placeholder="4"
           keyboardType="number-pad"
           mode="outlined"
           onChangeText={(value) => setPortions(value)}
           value={portions}
         />
+        {errors.portions && (
+          <Text style={styles.erroText}>{errors.portions}</Text>
+        )}
 
         <View style={styles.pickerContainer}>
           <Picker
@@ -226,7 +226,38 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
           <Button
             onPress={() => {
               if (buttonLabel === "next") {
-                addRecipe();
+                const schema = yup.object().shape({
+                  title: yup.string().min(5).required("field required"),
+                  description: yup.string().required("field required"),
+                  imagePath: yup.string().url().required("field required"),
+                  portions: yup.number().required("field required"),
+                  category: yup.string().required("field required"),
+                  mealCategory: yup.string().required("field required"),
+                });
+
+                schema
+                  .validate(
+                    {
+                      title,
+                      description,
+                      imagePath,
+                      portions,
+                      category,
+                      mealCategory,
+                    },
+                    {
+                      abortEarly: false,
+                    }
+                  )
+                  .then(() => {
+                    addRecipe();
+                  })
+                  .catch((e) => {
+                    if (e instanceof yup.ValidationError) {
+                      const errors = getValidationErrors(e);
+                      setErrors(errors);
+                    }
+                  });
               }
 
               if (buttonLabel === "confirm") {
@@ -298,6 +329,12 @@ const styles = StyleSheet.create({
     marginTop: 18,
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  erroText: {
+    color: "#db2e2e",
+    textAlign: "center",
+    width: "80%",
   },
 });
 
