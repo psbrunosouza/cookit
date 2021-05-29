@@ -10,7 +10,6 @@ import {
   Caption,
   Card,
   Paragraph,
-  Divider,
   IconButton,
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
@@ -22,6 +21,11 @@ import { IngredientService } from "../../services/IngredientService";
 import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ingredientAddAction,
+  ingredientRemoveAction,
+} from "../../actions/ingredientAction";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -31,7 +35,6 @@ type Props = {
 
 const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [recipeId, setRecipeId] = React.useState("");
-  const [ingredients, setIngredients] = React.useState<IIngredient[]>([]);
   const [name, setName] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
   const [measurementUnit, setMeasurementUnit] = React.useState("g");
@@ -39,6 +42,8 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
+  const dispatch = useDispatch();
+  const ingredients = useSelector((state) => state) as IIngredient[];
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -80,7 +85,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        setIngredients([...ingredients, item]);
+        dispatch(ingredientAddAction(item));
         setName("");
         setQuantity("");
         setMeasurementUnit("g");
@@ -127,10 +132,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
 
   const deleteIngredient = useCallback(
     (id: string) => {
-      const ingredientsUpdated = ingredients.filter((ingredient) => {
-        return ingredient.id !== id;
-      });
-      setIngredients(ingredientsUpdated);
+      dispatch(ingredientRemoveAction(id));
     },
     [ingredients]
   );
@@ -272,7 +274,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
           <Button
             onPress={() => {
               createNewIngredients();
-              navigation.navigate("CreateSteps", { id: recipeId });             
+              navigation.navigate("CreateSteps", { id: recipeId });
             }}
             style={styles.buttonNext}
             mode="contained"
