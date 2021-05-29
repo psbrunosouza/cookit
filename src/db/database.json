@@ -1,0 +1,290 @@
+{
+    "Recipies":[
+        {
+            "id": "813fc7f6-1464-4180-8a99-0b27eb921573",
+            "title":"Pizza",
+            "description": "Pizza tradicional",
+            "imagePath": "https://www.alegrafoods.com.br/wp-content/uploads/2020/07/9-img-blog.png",
+            "Ingredients":[
+                {
+                    "id": "b64a6e2b-303a-4957-af63-283d433dfe58",
+                    "name":"Calabresa",
+                    "quantity":"2"
+                },
+                {
+                    "id": "0722c9f2-957e-4a5f-b18b-04253949d4b5",
+                    "name": "Queijo",
+                    "quantity": "30g"
+                },
+
+                {
+                    "id": "029a1f1a-9290-41ca-92ba-f18ab9037357",
+                    "name": "Sal",
+                    "quantity": "100ml"
+                },
+                {
+                    "id": "c6e89952-ab37-4e5e-9577-7f394e7b4101",
+                    "name": "Tomate",
+                    "quantity": "3"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "1e467a0e-d5e8-4ce8-aeea-38bd27cff922",
+            "title":"Pastel",
+            "description": "Crocante e saboroso",
+            "imagePath": "https://guiadopastel.com.br/wp-content/uploads/2020/04/4-receitas-de-massa-de-pastel-dourado.jpg",
+            "Ingredients":[
+                {
+                    "id": "bc4470fd-2e22-45a6-b098-adf386f81447",
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "id": "e47f8a6d-d9ec-4125-be94-8d46110ae935",
+                    "name": "Carne",
+                    "quantity": "200g"
+                },
+
+                {
+                    "id": "04ae7353-07b8-4509-b863-0e31bf2d28f4",
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "2386df64-9abf-4a02-8b0e-9cc9291c58c5",
+            "title":"Coxinha",
+            "description": "Cheia de frango",
+            "imagePath": "https://img.itdg.com.br/tdg/images/recipes/000/080/686/21535/21535_original.jpg?w=1200",
+            "Ingredients":[
+                {
+                    "id": "308799e4-0a7a-424a-b835-25c905696015",
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "id": "4e16a24d-e340-4f62-8993-613bb92f2ecb",
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "id": "eac3d9bc-305d-4a68-8efc-8a575386d116",
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "81d6ed1c-85b7-4245-92ac-cc883f8c8c2a",
+            "title":"Pastel",
+            "description": "Meio adocicado",
+            "imagePath": "https://i.ytimg.com/vi/SkX3sf3Dvyc/maxresdefault.jpg",
+            "Ingredients":[
+                {
+                    "id": "8cdaefcb-ac57-4d58-895c-3b242f1408f3",
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "id": "6423f2dd-2996-44bd-8c8c-253cf548532f",
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "id": "3e1157d3-9984-4252-a24b-176f0659f065",
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "b66a3a52-7d4f-49c6-b811-a98233a4c429",
+            "title":"Pastel",
+            "description": "Com carne",
+            "imagePath": "https://www.receitas-sem-fronteiras.com/media/pastel-maria_crop.jpg/rh/pastel-de-carne.jpg",
+            "Ingredients":[
+                {
+                    "id": "81d7e75c-0df4-434f-9bd6-ac255a1dbe95",
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "id": "5e711ed5-4906-40e8-a799-feb9b409962a",
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "id": "5a8a9d17-a89b-4128-b3d4-fad5fd76851d",
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        },
+
+        {
+            "id": "f3536696-9793-43b3-8bb2-3988560e56b3",
+            "title":"Pastel",
+            "description": "Com carne seca",
+            "imagePath": "https://loja.barracadoze.com.br/wp-content/uploads/sites/5/2020/10/pastel-carne-seca.jpg",
+            "Ingredients":[
+                {
+                    "id": "8293b09c-fd7c-4bac-bcb5-1b3a9e32d59b",
+                    "name":"salt",
+                    "quantity":"50g"
+                },
+                {
+                    "id": "c0a1c3d7-27b3-4350-b3c1-923e7d9a9c05",
+                    "name": "tomato",
+                    "quantity": "30g"
+                },
+
+                {
+                    "id": "9d8e071e-0118-434c-af29-08aee5230b7f",
+                    "name": "water",
+                    "quantity": "100ml"
+                }
+            ],
+
+            "Step-by-step":[
+                {
+                    "step": "1",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "2",
+                    "description":"do nothing"
+                },
+                
+                {
+                    "step": "3",
+                    "description":"do nothing"
+                },
+
+                {
+                    "step": "4",
+                    "description":"do nothing"
+                }
+            ]
+        }
+    ]
+}
