@@ -1,10 +1,12 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { createStore, combineReducers} from "redux";
 import ingredientReducer from "./src/reducer/ingredientReducer";
+import recipeReducer from './src/reducer/recipeReducer';
 import { NavigationContainer } from "@react-navigation/native";
 import { MainNavigation } from "./src/navigation/MainNavigation";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+
 
 const theme = {
   ...DefaultTheme,
@@ -15,8 +17,12 @@ const theme = {
   },
 };
 
-const store = createStore(ingredientReducer);
+const allReducers = combineReducers({
+    ingredientReducer,
+    recipeReducer
+ });
 
+export const store = createStore(allReducers);
 export default function App() {
   return (
     <Provider store={store}>

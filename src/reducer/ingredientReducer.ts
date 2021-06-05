@@ -1,4 +1,3 @@
-import { IIngredient } from "../models/Ingredient";
 
 const ingredientReducer = (state: any = [], action: any) => {
   switch (action.type) {

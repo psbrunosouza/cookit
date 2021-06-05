@@ -21,6 +21,8 @@ import { IconButton } from "react-native-paper";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
 import * as yup from "yup";
+import { useSelector} from 'react-redux';
+import  RootState from '../../models/rootState';
 
 type Props = {
   route: RouteProp<any, any>;
@@ -42,6 +44,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   ]);
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
   const navigation = useNavigation();
+  const recipe = useSelector((state:RootState) => state.recipeReducer);
 
   useEffect(() => {
     setRecipeId(route.params?.id);
@@ -104,8 +107,8 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
     const service = new StepService();
     const recipeService = new RecipeService();
 
-    service.create("@recipe", steps);
-    recipeService.replace("@recipe", recipeId).then();
+    service.create(recipe.id, steps);
+    recipeService.create(recipe.id, recipe)
     setStep("");
     setDescription("");
     setTimeToPrepare("");

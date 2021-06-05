@@ -1,29 +1,26 @@
-import "react-native-gesture-handler";
-import React, { useCallback } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { v4 } from "uuid";
 import { Picker } from "@react-native-picker/picker";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/core";
+import React, { useCallback } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import "react-native-gesture-handler";
 import { FlatList } from "react-native-gesture-handler";
-import * as yup from "yup";
 import {
-  TextInput,
   Button,
-  Text,
-  Title,
-  Checkbox,
   Caption,
+  Checkbox,
+  Text,
+  TextInput,
+  Title
 } from "react-native-paper";
-import { IRecipes } from "../../models/Recipe";
-import { IIngredient } from "../../models/Ingredient";
-import { IStep } from "../../models/Step";
-import { RecipeService } from "../../services/RecipeService";
-import getValidationErrors from "../../utils/getValidationErrors";
+import { useDispatch } from 'react-redux';
+import { v4 } from "uuid";
+import * as yup from "yup";
+import { createRecipeActions } from '../../actions/RecipeAction';
 import { Errors } from "../../models/Errors";
+import { IRecipes } from "../../models/Recipe";
+import getValidationErrors from "../../utils/getValidationErrors";
 
 const CreateRecipe: React.FC = () => {
-  const [id, setId] = React.useState<string>("");
-  const [buttonLabel, setButtonLabel] = React.useState<string>("next");
   const [title, setTitle] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [imagePath, setImagePath] = React.useState<string>("");
@@ -38,15 +35,13 @@ const CreateRecipe: React.FC = () => {
     "dessert",
   ]);
 
-  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
+  const navigation = useNavigation();
+  
   const addRecipe = useCallback(() => {
-    const service = new RecipeService();
-    const id = v4();
-    const ingredients: IIngredient[] = [];
-    const steps: IStep[] = [];
     const item: IRecipes = {
-      id,
+      id: v4(),
       title: title,
       description: description,
       imagePath: imagePath,
@@ -55,16 +50,11 @@ const CreateRecipe: React.FC = () => {
       favorite: false,
       timeToPrepare: 0,
       mealCategory: mealCategory,
-      ingredients,
-      steps,
+      ingredients: [],
+      steps: [],
     };
-
-    setId(id);
-    setButtonLabel("confirm");
-    service.create("@recipe", item).then();
+    dispatch(createRecipeActions(item))
   }, [
-    id,
-    buttonLabel,
     title,
     description,
     imagePath,
@@ -74,22 +64,6 @@ const CreateRecipe: React.FC = () => {
     errors,
   ]);
 
-  const removeRecipe = useCallback(
-    (id: string) => {
-      const service = new RecipeService();
-      service.remove(id).then();
-    },
-    [
-      id,
-      buttonLabel,
-      title,
-      description,
-      imagePath,
-      portions,
-      category,
-      mealCategory,
-    ]
-  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -182,10 +156,6 @@ const CreateRecipe: React.FC = () => {
         <View style={styles.buttonContainer}>
           <Button
             onPress={() => {
-              if (buttonLabel === "confirm") {
-                setButtonLabel("next");
-              }
-              removeRecipe("@recipe");
               navigation.navigate("Recipes");
             }}
             style={styles.buttonBack}
@@ -197,59 +167,47 @@ const CreateRecipe: React.FC = () => {
 
           <Button
             onPress={() => {
-              if (buttonLabel === "next") {
-                const schema = yup.object().shape({
-                  title: yup.string().min(5).required("field required"),
-                  description: yup.string().required("field required"),
-                  imagePath: yup.string().url().required("field required"),
-                  portions: yup
-                    .number()
-                    .required("field required"),
-                  category: yup.string().required("field required"),
-                  mealCategory: yup.string().required("field required"),
+              const schema = yup.object().shape({
+                title: yup.string().min(5).required("field required"),
+                description: yup.string().required("field required"),
+                imagePath: yup.string().url().required("field required"),
+                portions: yup
+                  .number()
+                  .required("field required"),
+                category: yup.string().required("field required"),
+                mealCategory: yup.string().required("field required"),
+              });
+
+              schema
+                .validate(
+                  {
+                    title,
+                    description,
+                    imagePath,
+                    portions,
+                    category,
+                    mealCategory,
+                  },
+                  {
+                    abortEarly: false,
+                  }
+                )
+                .then(() => {
+                  addRecipe();
+                  navigation.navigate("addIngredient");
+                })
+                .catch((e) => {
+                  if (e instanceof yup.ValidationError) {
+                    const errors = getValidationErrors(e);
+                    setErrors(errors);
+                  }
                 });
-
-                schema
-                  .validate(
-                    {
-                      title,
-                      description,
-                      imagePath,
-                      portions,
-                      category,
-                      mealCategory,
-                    },
-                    {
-                      abortEarly: false,
-                    }
-                  )
-                  .then(() => {
-                    addRecipe();
-                  })
-                  .catch((e) => {
-                    if (e instanceof yup.ValidationError) {
-                      const errors = getValidationErrors(e);
-                      setErrors(errors);
-                    }
-                  });
-              }
-
-              if (buttonLabel === "confirm") {
-                setTitle("");
-                setDescription("");
-                setImagePath("");
-                setPortions("");
-                setCategory("brazilian");
-                setMealCategory("lunch");
-                navigation.navigate("addIngredient", { id: id });
-                setButtonLabel("next");
-              }
             }}
             style={styles.buttonNext}
             mode="contained"
             compact={false}
           >
-            <Text style={styles.buttonTextStyle}>{buttonLabel}</Text>
+            <Text style={styles.buttonTextStyle}>Confirm</Text>
           </Button>
         </View>
       </View>
