@@ -4,8 +4,8 @@ import api from './api';
 
 class StepService {
 
-  create(steps: Steps) {
-    api.post("/ingredients", steps).then((response) => {
+  create(id: string, steps: Steps) {
+    api.post(`/recipes/${id}/steps`, steps).then((response) => {
       console.log(response);
     }).catch((err) => {
       console.log(err);
