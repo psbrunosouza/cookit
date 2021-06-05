@@ -8,4 +8,8 @@ const ingredientRemoveAction = (id: string) => {
   return {type: "REMOVE_INGREDIENT", payload: id}
 }
 
-export { ingredientAddAction, ingredientRemoveAction };
+const ingredientClearAction = () => {
+  return {type: "CLEAR"}
+}
+
+export { ingredientAddAction, ingredientRemoveAction, ingredientClearAction };

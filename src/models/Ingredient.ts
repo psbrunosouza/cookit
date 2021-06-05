@@ -5,5 +5,4 @@ export interface IIngredient{
   unitMeasurement: string,
   withoutLactose: boolean,
   withoutGluten: boolean,
-  recipeId: string
 }
