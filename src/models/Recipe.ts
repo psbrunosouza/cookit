@@ -11,8 +11,6 @@ export interface IRecipes{
   timeToPrepare: number,
   category: string, // vegan | brazilian
   mealCategory: string,
-  ingredients: IIngredient[],
-  steps: IStep[]
 }
 
 // TIME TO PREPARE SHOULD BE CALCULATED BASED ON STEPS TIME
