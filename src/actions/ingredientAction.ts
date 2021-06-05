@@ -1,7 +1,11 @@
 import { IIngredient } from "../models/Ingredient";
 
 const ingredientAddAction = (ingredient: IIngredient) => {
-  return {type: "ADD_INGREDIENT", payload: ingredient}
+  return {type: "INSERT_INGREDIENT", payload: ingredient}
+}
+
+const ingredientCreateListAction = (ingredient: IIngredient[]) => {
+  return {type: "CREATE_INGREDIENTS_LIST", payload: ingredient}
 }
 
 const ingredientRemoveAction = (id: string) => {
@@ -12,4 +16,4 @@ const ingredientClearAction = () => {
   return {type: "CLEAR"}
 }
 
-export { ingredientAddAction, ingredientRemoveAction, ingredientClearAction };
+export { ingredientAddAction, ingredientRemoveAction, ingredientCreateListAction, ingredientClearAction };

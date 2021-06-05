@@ -25,12 +25,12 @@ const Recipes: React.FC = () => {
   const [recipes, setRecipes] = React.useState<IRecipes[]>([])
   const navigation = useNavigation();
 
-  React.useEffect(() =>  {
-    const recipeService = new RecipeService();
-    recipeService.show().then((response) => {
-       setRecipes(response)
-    });
-  }, [recipes]);
+  // React.useEffect(() =>  {
+  //   const recipeService = new RecipeService();
+  //   recipeService.show().then((response) => {
+  //      setRecipes(response)
+  //   });
+  // }, [recipes]);
 
   return (
     <ScrollView contentContainerStyle={styles.Container}>
@@ -50,14 +50,14 @@ const Recipes: React.FC = () => {
               <Card.Content>
 
               <Caption>Ingredients</Caption>
-              <FlatList
+              {/* <FlatList
                 style={styles.ingredientsList}
                 keyExtractor={ingredient => ingredient.id}
                 data={recipe.ingredients}
                 renderItem={({item: ingredient}) => (
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
-              />
+              /> */}
 
               </Card.Content>
 

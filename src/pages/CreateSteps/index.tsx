@@ -49,8 +49,14 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   const navigation = useNavigation();
   const recipe = useSelector((state:RootState) => state.recipeReducer);
   const steps = useSelector((state:RootState) => state.stepReducer);
+  const ingredients = useSelector((state:RootState) => state.ingredientReducer);
+
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(ingredients);
+  }, [])
 
   const insertStep = useCallback(() => {
     const step: IStep = {
@@ -105,7 +111,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
     const service = new StepService();
     const recipeService = new RecipeService();
 
-    service.create(recipe, steps);
+    // service.create(recipe, steps);
     // to - do
     //recipeService.create(recipe.id, recipe)
     setDescription("");

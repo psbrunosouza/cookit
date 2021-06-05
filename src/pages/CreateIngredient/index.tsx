@@ -1,5 +1,5 @@
 // CORE
-import React from "react";
+import React, {useEffect} from "react";
 // STRUCTURE
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import {
@@ -17,7 +17,6 @@ import { FlatList } from "react-native-gesture-handler";
 import { v4 } from "uuid";
 import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { IngredientService } from "../../services/IngredientService";
 import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
@@ -26,6 +25,7 @@ import {
   ingredientAddAction,
   ingredientRemoveAction,
   ingredientClearAction,
+  ingredientCreateListAction
 } from "../../actions/ingredientAction";
 import RootState from "../../models/RootState";
 
@@ -47,8 +47,13 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const ingredients = useSelector(
     (state: RootState) => state.ingredientReducer
   ) as IIngredient[];
-  const recipe = useSelector((state: RootState) => state.recipeReducer);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    return () => {
+      dispatch(ingredientClearAction());
+    }
+  }, []);
 
   const insertIngredient = () => {
     const ingredient: IIngredient = {
@@ -91,13 +96,8 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
       });
   };
 
-  const createIngredients = () => {
-    const ingredientService = new IngredientService();
-    dispatch(ingredientClearAction());
-
-    ingredientService.create(recipe, ingredients).then((response) => {
-      return response;
-    });
+  const createIngredientsList = () => {
+    dispatch(ingredientCreateListAction(ingredients))
   }
 
   const deleteIngredient = (id: string) => {
@@ -240,7 +240,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         >
           <Button
             onPress={() => {
-              createIngredients();
+              createIngredientsList();
               navigation.navigate("CreateSteps");
             }}
             style={styles.buttonNext}
