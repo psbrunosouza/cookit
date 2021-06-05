@@ -21,17 +21,22 @@ import { IngredientService } from "../../services/IngredientService";
 import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import {
   ingredientAddAction,
   ingredientRemoveAction,
 } from "../../actions/ingredientAction";
-
+import RootState from '../../models/RootState';
+import { create } from "yup/lib/array";
 type RouteStackProp = RouteProp<any, any>;
 
 type Props = {
   route: RouteStackProp;
 };
+
+
+
+
 
 const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [recipeId, setRecipeId] = React.useState("");
@@ -41,13 +46,16 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [withoutLactose, setWithoutLactose] = React.useState<boolean>(false);
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
-
+  
   const dispatch = useDispatch();
-  const ingredients = useSelector((state) => state) as IIngredient[];
+  const ingredients = useSelector((state: RootState) => state.ingredientReducer) as IIngredient[];
+  const recipe = useSelector((state: RootState) => state.recipeReducer);
   const navigation = useNavigation();
+
 
   useEffect(() => {
     setRecipeId(route.params?.id);
+    console.log(recipe)
   }, [
     ingredients,
     recipeId,
@@ -85,12 +93,14 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
+        
         dispatch(ingredientAddAction(item));
         setName("");
         setQuantity("");
         setMeasurementUnit("g");
         setWithoutGluten(false);
         setWithoutLactose(false);
+        console.log(ingredients)
       })
       .catch((e) => {
         if (e instanceof yup.ValidationError) {
@@ -110,6 +120,10 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
 
   const createNewIngredients = useCallback(() => {
     const service = new IngredientService();
+
+    // service.create(recipe.id, ingredients).then((response) => {
+      // return response;
+    // });
 
     service.create("@recipe", ingredients).then((response) => {
       return response;
