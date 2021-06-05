@@ -1,10 +1,12 @@
 import { IIngredient } from "./Ingredient";
 import { IRecipes } from "./Recipe";
+import { IStep } from "./Step";
 
 
 interface RootState{
-    ingredientReducer: IIngredient[],
     recipeReducer: IRecipes,
+    ingredientReducer: IIngredient[],
+    stepReducer: IStep[],
   }
 
   export default RootState;

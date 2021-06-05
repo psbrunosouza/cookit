@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import {
   TextInput,
@@ -21,17 +21,20 @@ import { IconButton } from "react-native-paper";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
 import * as yup from "yup";
-import { useSelector} from 'react-redux';
-import  RootState from '../../models/rootState';
+import { useDispatch, useSelector } from "react-redux";
+import {
+ stepAddAction,
+ stepClearAction,
+ stepRemoveAction
+} from "../../actions/stepAction";
+import RootState from "../../models/RootState";
+
 
 type Props = {
   route: RouteProp<any, any>;
 };
 
 const CreateSteps: React.FC<Props> = ({ route }) => {
-  const [recipeId, setRecipeId] = React.useState<string>("");
-  const [steps, setSteps] = React.useState<IStep[]>([]);
-  const [step, setStep] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("bake");
   const [temperature, setTemperature] = React.useState<string>("low");
@@ -45,32 +48,30 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
   const navigation = useNavigation();
   const recipe = useSelector((state:RootState) => state.recipeReducer);
+  const steps = useSelector((state:RootState) => state.stepReducer);
 
-  useEffect(() => {
-    setRecipeId(route.params?.id);
-  }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
+  const dispatch = useDispatch();
 
-  const addStep = useCallback(() => {
-    const item: IStep = {
+  const insertStep = useCallback(() => {
+    const step: IStep = {
       id: v4(),
-      step: Number.parseInt(step),
+      step: 1,
       description: description,
       timeToPrepare: Number.parseInt(timeToPrepare),
       method: method,
       temperature: temperature,
-      recipeId: recipeId,
     };
 
     const schema = yup.object().shape({
       description: yup.string().min(5).required("field required"),
-      step: yup.number().required("field required"),
+     // step: yup.number().required("field required"),
       timeToPrepare: yup.number().required("field required"),
     });
 
     schema
       .validate(
         {
-          step,
+          //step,
           description,
           timeToPrepare,
         },
@@ -79,8 +80,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        setSteps([...steps, item]);
-        setStep("");
+        dispatch(stepAddAction(step));
         setDescription("");
         setTimeToPrepare("");
         setMethod("");
@@ -93,38 +93,30 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         }
       });
   }, [
-    steps,
+
     errors,
-    recipeId,
-    step,
     description,
     timeToPrepare,
     method,
     temperature,
   ]);
 
-  const createNewSteps = useCallback(() => {
+  const createStep = useCallback(() => {
     const service = new StepService();
     const recipeService = new RecipeService();
 
-    service.create(recipe.id, steps);
-    recipeService.create(recipe.id, recipe)
-    setStep("");
+    service.create(recipe, steps);
+    // to - do
+    //recipeService.create(recipe.id, recipe)
     setDescription("");
     setTimeToPrepare("");
     setMethod("");
     setTemperature("none");
-  }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
+  }, [description, timeToPrepare, method, temperature]);
 
-  const deleteStep = useCallback(
-    (id: string) => {
-      const stepsUpdated = steps.filter((step) => {
-        return step.id !== id;
-      });
-      setSteps(stepsUpdated);
-    },
-    [steps]
-  );
+  const deleteStep = (id: string) => {
+    dispatch(stepRemoveAction(id));
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -172,7 +164,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         />
       )}
 
-      <TextInput
+      {/* <TextInput
         style={styles.textInput}
         label="step number"
         keyboardType="number-pad"
@@ -180,7 +172,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         onChangeText={(value) => setStep(value)}
         value={step}
       />
-      {errors.step && <Text style={styles.erroText}>{errors.step}</Text>}
+      {errors.step && <Text style={styles.erroText}>{errors.step}</Text>} */}
 
       <TextInput
         style={styles.textInput}
@@ -252,7 +244,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
           mode="contained"
           compact={false}
           style={styles.buttonStyle}
-          onPress={() => addStep()}
+          onPress={() => insertStep()}
         >
           <Text style={styles.buttonTextStyle}>Add</Text>
         </Button>
@@ -266,7 +258,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
       >
         <Button
           onPress={() => {
-            createNewSteps();
+            createStep();
             navigation.navigate("Recipes");
           }}
           style={styles.buttonAdd}
