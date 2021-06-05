@@ -6,6 +6,7 @@ import recipeReducer from './src/reducer/recipeReducer';
 import { NavigationContainer } from "@react-navigation/native";
 import { MainNavigation } from "./src/navigation/MainNavigation";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import stepReducer from "./src/reducer/stepsReducer";
 
 
 const theme = {
@@ -19,7 +20,8 @@ const theme = {
 
 const allReducers = combineReducers({
     ingredientReducer,
-    recipeReducer
+    recipeReducer,
+    stepReducer
  });
 
 export const store = createStore(allReducers);

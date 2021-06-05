@@ -4,16 +4,16 @@ import { IStep } from "../models/Step";
 
 class StepService {
 
-  async create(recipeId: string, steps: IStep[] ): Promise<void> {
+  async create(recipe: IRecipes, steps: IStep[] ): Promise<void> {
     try{
-      const object = await AsyncStorage.getItem(recipeId) as string;
-      const recipe: IRecipes = JSON.parse(object);
+      //const object = await AsyncStorage.getItem(recipeId) as string;
+      //const recipe: IRecipes = JSON.parse(object);
 
       steps.forEach((step) => {
         recipe.steps.push(step)
       });
 
-      await AsyncStorage.setItem(recipeId, JSON.stringify(recipe));
+      await AsyncStorage.setItem(recipe.id, JSON.stringify(recipe));
     }catch(e){
       console.log(e);
     }
