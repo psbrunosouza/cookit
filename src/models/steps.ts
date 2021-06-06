@@ -1,7 +1,7 @@
 import { IStep } from "./Step";
 
 export interface Steps{
-    id: string,
+    id: string | number,
     recipeId: string,
     steps: IStep[]
 }

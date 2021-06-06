@@ -2,7 +2,7 @@ import {IIngredient} from './Ingredient';
 import {IStep} from './Step';
 
 export interface IRecipes{
-  id: string,
+  id: string | number,
   title: string,
   description: string,
   imagePath: string,
