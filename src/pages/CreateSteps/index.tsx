@@ -17,6 +17,7 @@ import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
 import { StepService } from "../../services/StepService";
 import { RecipeService } from "../../services/RecipeService";
+import {IngredientService} from "../../services/IngredientService";
 import { IconButton } from "react-native-paper";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
@@ -28,6 +29,8 @@ import {
  stepRemoveAction
 } from "../../actions/stepAction";
 import RootState from "../../models/RootState";
+import { Ingredients } from "../../models/ingredients";
+import { Steps } from "../../models/steps";
 
 
 type Props = {
@@ -55,7 +58,9 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(ingredients);
+    return () => {
+      dispatch(stepClearAction());
+    }
   }, [])
 
   const insertStep = useCallback(() => {
@@ -108,12 +113,25 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   ]);
 
   const createStep = useCallback(() => {
-    const service = new StepService();
+    const stepService = new StepService();
     const recipeService = new RecipeService();
+    const ingredientService = new IngredientService();
+    
+  recipeService.create(recipe).then((response) => {
+    const createdRecipe = response.data;
 
-    // service.create(recipe, steps);
-    // to - do
-    //recipeService.create(recipe.id, recipe)
+    ingredientService.create(createdRecipe.id, {
+      ingredients, 
+      recipeId: createdRecipe.id,
+    } as Ingredients ); 
+
+    stepService.create(createdRecipe.id, {
+      steps, 
+      recipeId: createdRecipe.id,
+    } as Steps ); 
+  });
+    
+
     setDescription("");
     setTimeToPrepare("");
     setMethod("");

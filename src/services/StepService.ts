@@ -1,4 +1,3 @@
-import { IStep } from "../models/Step";
 import { Steps} from '../models/steps';
 import api from './api';
 

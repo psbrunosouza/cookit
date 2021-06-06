@@ -1,4 +1,3 @@
-import { IIngredient } from "../models/Ingredient";
 import { Ingredients } from '../models/ingredients';
 import api from './api';
 
