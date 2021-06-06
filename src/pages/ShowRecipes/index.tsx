@@ -25,12 +25,12 @@ const Recipes: React.FC = () => {
   const [recipes, setRecipes] = React.useState<IRecipes[]>([])
   const navigation = useNavigation();
 
-  // React.useEffect(() =>  {
-  //   const recipeService = new RecipeService();
-  //   recipeService.show().then((response) => {
-  //      setRecipes(response)
-  //   });
-  // }, [recipes]);
+  React.useEffect(() =>  {
+    const recipeService = new RecipeService();
+    recipeService.index().then((response) => {
+       setRecipes(response.data)
+    });
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.Container}>
