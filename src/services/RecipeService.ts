@@ -9,6 +9,11 @@ class RecipeService {
       //   console.log(recipe)
       // }).catch((err) => console.log(err))
   }
+
+  async index() {
+    const showAllRecipes = await api.get('/recipes')
+    return showAllRecipes;
+  }
 }
 
 export { RecipeService };
