@@ -10,7 +10,8 @@ import {
   FlatList,
 } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+
 
 import {
   Card,
@@ -20,54 +21,62 @@ import {
   Caption,
 } from 'react-native-paper';
 
+type Props = {
+  route: RouteProp<any, any>;
+};
 
-const Recipes: React.FC = () => {
+
+const Recipes: React.FC<Props> = ({ route }) => {
   const [recipes, setRecipes] = React.useState<IRecipes[]>([])
   const navigation = useNavigation();
 
-  React.useEffect(() =>  {
+  React.useEffect(() => {
     const recipeService = new RecipeService();
     recipeService.index().then((response) => {
-       setRecipes(response.data)
+      setRecipes(response.data)
     });
   }, []);
+
+  React.useEffect(() => {
+      
+  }, [recipes]);
 
   return (
     <ScrollView contentContainerStyle={styles.Container}>
       <Title style={styles.pageTitle}>Lista de receitas</Title>
-        <FlatList
-          style={{marginBottom: 64}}
-          keyExtractor={(recipe => recipe.id)}
-          data={recipes}
-          renderItem={({ item:recipe }) => (
-            <Card style={styles.card}>
-              <Card.Cover source={{ uri: `${recipe.imagePath}` }} />
-              <Card.Content>
-                <Title>{recipe.title}</Title>
-                <Paragraph>{recipe.description}</Paragraph>
-              </Card.Content>
+      <FlatList
+        style={{ marginBottom: 64 }}
+        keyExtractor={(recipe => recipe.id)}
+        data={recipes}
+        renderItem={({ item: recipe }) => (
+          <Card style={styles.card}>
+            <Card.Cover source={{ uri: `${recipe.imagePath}` }} />
+            <Card.Content>
+              <Title>{recipe.title}</Title>
+              <Paragraph>{recipe.description}</Paragraph>
+            </Card.Content>
 
-              <Card.Content>
+            <Card.Content>
 
               <Caption>Ingredients</Caption>
               <FlatList
                 style={styles.ingredientsList}
                 keyExtractor={ingredient => ingredient.id}
                 data={recipe.ingredients}
-                renderItem={({item: ingredient}) => (
+                renderItem={({ item: ingredient }) => (
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
               />
 
-              </Card.Content>
+            </Card.Content>
 
-              <Card.Actions>
-                <Button onPress={() => navigation
-                    .navigate("DetailsRecipe", {recipe: recipe})}>
-                    See more
+            <Card.Actions>
+              <Button onPress={() => navigation
+                .navigate("DetailsRecipe", { recipeId: recipe.id })}>
+                See more
                 </Button>
-              </Card.Actions>
-            </Card>
+            </Card.Actions>
+          </Card>
         )} />
     </ScrollView>
   )
