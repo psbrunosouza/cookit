@@ -50,6 +50,8 @@ const CreateRecipe: React.FC = () => {
       favorite: false,
       timeToPrepare: 0,
       mealCategory: mealCategory,
+      ingredients: [],
+      steps: []
     };
     dispatch(createRecipeActions(item))
   }, [
