@@ -5,48 +5,32 @@ import {
   Surface,
   IconButton,
   Card,
-  Paragraph,
   Divider,
 } from "react-native-paper";
 import { View, ScrollView, StyleSheet, Image, FlatList } from "react-native";
 import { ShowIngredients } from "../ShowIngredients";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { IIngredient } from "../../models/Ingredient";
-import { IStep } from "../../models/Step";
-import { IRecipes } from "../../models/Recipe";
 import { RecipeService } from "../../services/RecipeService";
+import { IRecipes } from "../../models/Recipe";
 
 type Props = {
   route: RouteProp<any, any>;
 };
 
 const DetailsRecipe: React.FC<Props> = ({ route }) => {
-  const [id, setId] = useState<string>("");
-  const [recipe, setRecipe] = useState<IRecipes>();
-  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
-  const [steps, setSteps] = useState<IStep[]>([]);
   const [timeToPrepare, setTimeToPrepare] = useState<number>(0);
   const service = new RecipeService();
-
-  useEffect(() => {
-    setRecipe(route.params?.recipe);
-    setSteps(route.params?.recipe.steps);
-    setIngredients(route.params?.recipe.ingredients);
-    if(recipe){
-      setId(recipe.id);
-    }
-    service.getTimeToPrepare(id).then((response) => {
-      setTimeToPrepare(response)
-    });
-
-  }, [recipe, ingredients, steps, id, timeToPrepare]);
-
-  const removeRecipe = useCallback((id: string) => {
-    const service = new RecipeService();
-    service.remove(id);
-  }, [id]);
-
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes)
+ 
   const navigation = useNavigation();
+  useEffect(() => {
+    
+
+    service.show(route.params?.recipeId) .then((response) => {
+      const recipe = response.data;
+      setRecipe(recipe);
+    })
+  }, [])
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -76,8 +60,10 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
         <Surface style={styles.surface}>
           <IconButton
             onPress={() => {
-              removeRecipe(id);
-              navigation.navigate("Recipes");
+              service.remove(recipe.id).then((recipeId) => { 
+
+                navigation.navigate("Recipes", {recipeId: recipe.id});
+              })
             }}
             color="#f71c1c"
             icon="delete"
@@ -86,13 +72,13 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
       </View>
 
       <View>
-        <ShowIngredients ingredients={ingredients} />
+        <ShowIngredients ingredients={recipe.ingredients} />
       </View>
       <Caption style={styles.CaptionWidth}> Step by step </Caption>
       <Card style={styles.card}>
         <FlatList
           keyExtractor={(step) => step.id}
-          data={steps}
+          data={recipe.steps}
           renderItem={({ item: step }) => (
             <>
               <Card.Content>

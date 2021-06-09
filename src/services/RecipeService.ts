@@ -14,6 +14,16 @@ class RecipeService {
     const showAllRecipes = await api.get('/recipes')
     return showAllRecipes;
   }
+
+  async show(id: string | number) {
+    const showRecipe = await api.get(`/recipes/${id}`)
+    return showRecipe;
+  }
+
+  async remove(id: string | number) {
+    const removeRecipe = await api.delete(`/recipes/${id}`)
+    return removeRecipe;
+  }
 }
 
 export { RecipeService };
