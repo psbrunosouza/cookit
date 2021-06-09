@@ -28,6 +28,7 @@ import {
   ingredientCreateListAction
 } from "../../actions/ingredientAction";
 import RootState from "../../models/RootState";
+import { IRecipes } from "../../models/Recipe";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -44,9 +45,15 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
   const dispatch = useDispatch();
+
   const ingredients = useSelector(
     (state: RootState) => state.ingredientReducer
   ) as IIngredient[];
+  
+  const recipe = useSelector(
+    (state: RootState) => state.recipeReducer
+  ) as IRecipes;
+
   const navigation = useNavigation();
 
   useEffect(() => {

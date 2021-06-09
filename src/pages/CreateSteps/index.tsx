@@ -117,6 +117,9 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
     const recipeService = new RecipeService();
     const ingredientService = new IngredientService();
     
+  recipe.ingredients = ingredients;
+  recipe.steps = steps;
+
   recipeService.create(recipe).then((response) => {
     const createdRecipe = response.data;
 

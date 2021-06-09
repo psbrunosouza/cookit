@@ -50,14 +50,14 @@ const Recipes: React.FC = () => {
               <Card.Content>
 
               <Caption>Ingredients</Caption>
-              {/* <FlatList
+              <FlatList
                 style={styles.ingredientsList}
                 keyExtractor={ingredient => ingredient.id}
                 data={recipe.ingredients}
                 renderItem={({item: ingredient}) => (
                   <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
-              /> */}
+              />
 
               </Card.Content>
 
