@@ -24,6 +24,11 @@ class RecipeService {
     const removeRecipe = await api.delete(`/recipes/${id}`)
     return removeRecipe;
   }
+
+  async put(id: string | number,  data: IRecipes) {
+    const uptadeRecipe = await api.put(`/recipes/${id}`, data)
+    return uptadeRecipe;
+  }
 }
 
 export { RecipeService };

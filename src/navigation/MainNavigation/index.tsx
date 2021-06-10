@@ -22,7 +22,7 @@ type RootStackParamList = {
   addIngredient: {recipe: IRecipes};
   CreateSteps: {recipe: IRecipes};
   DetailsRecipe: {recipeId: string| number | undefined};
-  EditRecipe: {recipe: IRecipes};
+  EditRecipe:  {recipeId: string| number | undefined};
   EditIngredient: {recipe: IRecipes};
   EditSteps: {recipe: IRecipes};
 };
