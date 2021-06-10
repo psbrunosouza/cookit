@@ -17,10 +17,19 @@ import { v4 } from "uuid";
 import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { IngredientService } from "../../services/IngredientService";
-import { IRecipes } from "../../models/Recipe";
 import getValidationErrors from "../../utils/getValidationErrors";
 import * as yup from "yup";
 import { Errors } from "../../models/Errors";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ingredientAddAction,
+  ingredientCreateListAction,
+  ingredientRemoveAction,
+  ingredientClearAction,
+} from "../../actions/ingredientAction";
+import RootState from "../../models/RootState";
+import { Ingredients } from "../../models/ingredients";
+import { IRecipes } from "../../models/Recipe";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -29,36 +38,49 @@ type Props = {
 };
 
 const EditIngredient: React.FC<Props> = ({ route }) => {
-  const [recipeId, setRecipeId] = React.useState("");
-  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
-  const [ingredients, setIngredients] = React.useState<IIngredient[]>([]);
+  const [id, setId] = React.useState<string | number>("");
   const [name, setName] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
-
   const [measurementUnit, setMeasurementUnit] = React.useState("g");
   const [withoutLactose, setWithoutLactose] = React.useState<boolean>(false);
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
   const navigation = useNavigation();
+  const ingredientService = new IngredientService();
+  const dispatch = useDispatch();
+
+  const recipe = useSelector(
+    (state: RootState) => state.recipeReducer
+  ) as IRecipes;
+
+  const ingredients = useSelector(
+    (state: RootState) => state.ingredientReducer
+  ) as IIngredient[];
 
   useEffect(() => {
-    setRecipe(route.params?.recipe);
-    setRecipeId(recipe.id);
-    setIngredients(recipe.ingredients);
-    console.log(recipeId);
-  }, [recipe, recipeId]);
+    ingredientService.index().then((response) => {
+      const ingredients = response.data as Ingredients[];
+
+      const ingredientsByRecipe = ingredients.filter((ingredient) => {
+        return ingredient.recipeId === recipe.id;
+      });
+
+      ingredientsByRecipe.forEach((ingredient) => {
+        setId(ingredient.id);
+        dispatch(ingredientCreateListAction(ingredient.ingredients));
+      });
+    });
+  }, [id]);
 
   const addIngredient = useCallback(() => {
-    const item: IIngredient = {
-      id: v4(),
+    const ingredient: IIngredient = {
       name: name,
       quantity: parseInt(quantity),
       unitMeasurement: measurementUnit,
       withoutLactose: withoutLactose,
       withoutGluten: withoutGluten,
-      recipeId: recipeId,
-    };
+    } as IIngredient;
 
     const schema = yup.object().shape({
       name: yup.string().min(2).required("field required"),
@@ -76,7 +98,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        setIngredients([...ingredients, item]);
+        dispatch(ingredientAddAction(ingredient))
         setName("");
         setQuantity("");
         setMeasurementUnit("g");
@@ -90,7 +112,6 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
         }
       });
   }, [
-    ingredients,
     name,
     quantity,
     measurementUnit,
@@ -100,21 +121,16 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
   ]);
 
   const createNewIngredients = useCallback(() => {
-    const service = new IngredientService();
-    service.update(recipe.id, ingredients).then((response) => {
-      return response;
-    });
+    ingredientService.update(id, {
+      id,
+      ingredients, 
+      recipeId: recipe.id,
+    } as Ingredients ); 
   }, [ingredients]);
 
-  const deleteIngredient = useCallback(
-    (id: string) => {
-      const ingredientsUpdated = ingredients.filter((ingredient) => {
-        return ingredient.id !== id;
-      });
-      setIngredients(ingredientsUpdated);
-    },
-    [ingredients]
-  );
+  const deleteIngredient = (id: string) => {
+    dispatch(ingredientRemoveAction(id));
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.ingredientContainer}>

@@ -2,11 +2,11 @@ import { Ingredients } from "../models/ingredients";
 import api from "./api";
 
 class IngredientService {
-  async index(){
+  async index() {
     const ingredients = api.get(`/ingredients`);
     return ingredients;
   }
-  
+
   async create(ingredients: Ingredients) {
     api
       .post(`/ingredients`, ingredients)
@@ -19,10 +19,16 @@ class IngredientService {
   }
 
   async delete(ingredientId: string | number) {
-    const deleteIngredients = await api.delete(
-      `/ingredients/${ingredientId}`
-    );
+    const deleteIngredients = await api.delete(`/ingredients/${ingredientId}`);
     return deleteIngredients;
+  }
+
+  async update(ingredientId: string | number, ingredients: Ingredients) {
+    const updatedIngredients = await api.put(
+      `/ingredients/${ingredientId}`,
+      ingredients
+    );
+    return updatedIngredients;
   }
 }
 
