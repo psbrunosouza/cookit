@@ -1,15 +1,29 @@
-import { Ingredients } from '../models/ingredients';
-import api from './api';
+import { Ingredients } from "../models/ingredients";
+import api from "./api";
 
 class IngredientService {
+  async index(){
+    const ingredients = api.get(`/ingredients`);
+    return ingredients;
+  }
   
-  create(id: string, ingredients: Ingredients) {
-    api.post(`/recipes/${id}/ingredients`, ingredients).then((response) => {
-      console.log(response);
-    }).catch((err) => {
-      console.log(err);
-    })
+  async create(ingredients: Ingredients) {
+    api
+      .post(`/ingredients`, ingredients)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async delete(ingredientId: string | number) {
+    const deleteIngredients = await api.delete(
+      `/ingredients/${ingredientId}`
+    );
+    return deleteIngredients;
   }
 }
 
-export { IngredientService }
+export { IngredientService };
