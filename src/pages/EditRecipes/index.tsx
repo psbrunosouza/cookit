@@ -59,8 +59,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
       recipeService.show(route.params?.recipeId).then((response) => {
         
         const recipe = response.data as IRecipes
-        dispatch(createRecipeActions)
-        console.log(recipe);
+        dispatch(createRecipeActions(recipe))
         setTitle(recipe.title);
         setDescription(recipe.description);
         setImagePath(recipe.imagePath);
@@ -77,7 +76,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
     const recipeUpdated: IRecipes = {
       id: recipe.id,
       title: title,
-      description: description,
+      description: description, 
       imagePath: imagePath,
       portions: Number.parseInt(portions),
       category: category,
@@ -87,30 +86,16 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
       ingredients: recipe.ingredients,
       steps: recipe.steps,
     } 
-
     recipeService.put(recipe.id, recipeUpdated).then((data) => {
-      console.log(data);
     })
-  }, []);
-
-  // const removeRecipe = useCallback(
-  //   (id: string) => {
-  //     const service = new RecipeService();
-  //     service.remove(id).then((response) => {
-  //       return response;
-  //     });
-  //   },
-  //   [
-  //     id,
-  //     buttonLabel,
-  //     title,
-  //     description,
-  //     imagePath,
-  //     portions,
-  //     category,
-  //     mealCategory,
-  //   ]
-  // );
+  }, [
+      title,
+      description,
+      imagePath,
+      portions,
+      category,
+      mealCategory,
+  ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -253,7 +238,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
                     }
                   });
 
-                navigation.navigate("EditIngredient");
+                // navigation.navigate("EditIngredient");
             }}
             style={styles.buttonNext}
             mode="contained"

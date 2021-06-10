@@ -12,6 +12,10 @@ import { ShowIngredients } from "../ShowIngredients";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { RecipeService } from "../../services/RecipeService";
 import { IRecipes } from "../../models/Recipe";
+import { IngredientService } from "../../services/IngredientService";
+import { Ingredients } from "../../models/ingredients";
+import { StepService } from "../../services/StepService";
+import { Steps } from "../../models/steps";
 
 type Props = {
   route: RouteProp<any, any>;
@@ -19,17 +23,31 @@ type Props = {
 
 const DetailsRecipe: React.FC<Props> = ({ route }) => {
   const [timeToPrepare, setTimeToPrepare] = useState<number>(0);
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
+  const [ingredients, setIngredients] = React.useState<Ingredients[]>([]);
+  const [steps, setSteps] = React.useState<Steps[]>([]);
+  const ingredientService = new IngredientService();
   const service = new RecipeService();
-  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes)
+  const stepService = new StepService();
+
  
   const navigation = useNavigation();
   useEffect(() => {
-    
-
-    service.show(route.params?.recipeId) .then((response) => {
+    service.show(route.params?.recipeId).then((response) => {
       const recipe = response.data;
       setRecipe(recipe);
+    });
+
+    ingredientService.index().then((response) => {
+      const ingredients = response.data as Ingredients[];
+      setIngredients(ingredients);
     })
+
+    stepService.index().then((response) => {
+      const steps = response.data as Steps[];
+      setSteps(steps);
+    })
+    
   }, [])
 
   return (
@@ -50,7 +68,7 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
         <Surface style={styles.surface}>
           <IconButton
             onPress={() => {
-              navigation.navigate("EditRecipe", {recipe});
+              navigation.navigate("EditRecipe", {recipeId: recipe.id});
             }}
             color="#4889eb"
             icon="square-edit-outline"
@@ -61,8 +79,18 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
           <IconButton
             onPress={() => {
               service.remove(recipe.id).then((recipeId) => { 
-
                 navigation.navigate("Recipes", {recipeId: recipe.id});
+                ingredients.forEach((ingredient) => {
+                  if(ingredient.recipeId === route.params?.recipeId){
+                    ingredientService.delete(ingredient.id);
+                  }
+                })
+
+                steps.forEach((step) => {
+                  if(step.recipeId === route.params?.recipeId){
+                    stepService.delete(step.id);
+                  }
+                })
               })
             }}
             color="#f71c1c"

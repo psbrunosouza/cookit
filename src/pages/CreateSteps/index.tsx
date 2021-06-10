@@ -123,18 +123,17 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   recipeService.create(recipe).then((response) => {
     const createdRecipe = response.data;
 
-    ingredientService.create(createdRecipe.id, {
+    ingredientService.create({
       ingredients, 
       recipeId: createdRecipe.id,
     } as Ingredients ); 
 
-    stepService.create(createdRecipe.id, {
+    stepService.create({
       steps, 
       recipeId: createdRecipe.id,
     } as Steps ); 
   });
     
-
     setDescription("");
     setTimeToPrepare("");
     setMethod("");
