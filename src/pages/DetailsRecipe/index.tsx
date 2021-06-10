@@ -68,7 +68,7 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
         <Surface style={styles.surface}>
           <IconButton
             onPress={() => {
-              navigation.navigate("EditRecipe", {recipe});
+              navigation.navigate("EditRecipe", {recipeId: recipe.id});
             }}
             color="#4889eb"
             icon="square-edit-outline"
