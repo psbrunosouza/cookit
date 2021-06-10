@@ -238,7 +238,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
                     }
                   });
 
-                // navigation.navigate("EditIngredient");
+                navigation.navigate("EditIngredient");
             }}
             style={styles.buttonNext}
             mode="contained"
