@@ -12,6 +12,7 @@ import {
   Card,
   Paragraph,
   Divider,
+  IconButton,
 } from "react-native-paper";
 import { v4 } from "uuid";
 // MODELS
@@ -23,17 +24,24 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { FlatList } from "react-native-gesture-handler";
 import { StepService } from "../../services/StepService";
+import { useDispatch, useSelector } from "react-redux";
+import RootState from "../../models/RootState";
+import { Steps } from "../../models/steps";
+import {
+  stepAddAction,
+  stepClearAction,
+  stepCreateListAction,
+  stepRemoveAction,
+} from "../../actions/stepAction";
 import { RecipeService } from "../../services/RecipeService";
+import { createRecipeActions } from "../../actions/RecipeAction";
 
 type Props = {
   route: RouteProp<any, any>;
 };
 
 const EditSteps: React.FC<Props> = ({ route }) => {
-  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
-  const [recipeId, setRecipeId] = React.useState<string>("");
-  const [steps, setSteps] = React.useState<IStep[]>([]);
-  const [step, setStep] = React.useState<string>("");
+  const [id, setId] = React.useState<string | number>("");
   const [description, setDescription] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("bake");
   const [temperature, setTemperature] = React.useState<string>("low");
@@ -46,36 +54,88 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   ]);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const stepService = new StepService();
+
+  const recipe = useSelector(
+    (state: RootState) => state.recipeReducer
+  ) as IRecipes;
+
+  const steps = useSelector((state: RootState) => state.stepReducer) as IStep[];
 
   useEffect(() => {
-    setRecipe(route.params?.recipe);
-    setSteps(recipe?.steps)
-    setRecipeId(recipe?.id);
-  }, [recipeId, recipe]);
+    stepService.index().then((response) => {
+      const steps = response.data as Steps[];
+
+      const stepByRecipes = steps.filter((step) => {
+        return step.recipeId === recipe.id;
+      });
+
+
+      stepByRecipes.forEach((step) => {
+        setId(step.id);
+        dispatch(stepCreateListAction(step.steps));
+      });
+
+    });
+
+  }, [id]);
 
   const addStep = useCallback(() => {
-    const item: IStep = {
+    const step: IStep = {
       id: v4(),
-      step: Number.parseInt(step),
+      step: 1,
       description: description,
       timeToPrepare: Number.parseInt(timeToPrepare),
       method: method,
       temperature: temperature,
-      recipeId: recipeId,
     };
 
-    setSteps([...steps, item]);
-    // setStep("");
-    // setDescription("");
-    // setTimeToPrepare("");
-    // setMethod("");
-    // setTemperature("");
-  }, [steps, recipeId, step, description, timeToPrepare, method, temperature]);
+    dispatch(stepAddAction(step));
+    setDescription("");
+    setTimeToPrepare("");
+    setMethod("");
+    setTemperature("none");
+
+  }, [id, steps, description, method, temperature, temperatures]);
+
+  const deleteStep = useCallback((id: string) => {
+    dispatch(stepRemoveAction(id))
+  }, [id, steps, description, method, temperature, temperatures]);
 
   const createNewSteps = useCallback(() => {
-    const service = new StepService();
-    service.update(recipeId, steps);
-  }, [steps, recipeId]);
+    const stepService = new StepService();
+
+
+    stepService
+      .update(id, {
+        id,
+        steps,
+        recipeId: recipe.id,
+      } as Steps)
+      .then((response) => {
+        const recipeService = new RecipeService();
+        const step = response.data as Steps;
+
+        const recipeUpdated = {
+          id: recipe.id,
+          description: recipe.description,
+          category: recipe.category,
+          favorite: recipe.favorite,
+          imagePath: recipe.imagePath,
+          mealCategory: recipe.mealCategory,
+          portions: recipe.portions,
+          timeToPrepare: recipe.timeToPrepare,
+          title: recipe.title,
+          steps: steps,
+          ingredients: recipe.ingredients,
+        } as IRecipes
+
+        dispatch(createRecipeActions(recipeUpdated))
+
+        recipeService.put(step.recipeId, recipeUpdated);
+      });
+  }, [id, steps, description, method, temperature, temperatures]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -87,29 +147,42 @@ const EditSteps: React.FC<Props> = ({ route }) => {
             keyExtractor={(step) => step.id}
             data={steps}
             renderItem={({ item: step }) => (
-              <>
-                <Card.Content>
-                  <View
+              <Card.Content>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Paragraph
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      color: "#2a7ecc",
+                      fontSize: 16,
+                      fontWeight: "bold",
                     }}
-                  >
-                    <Paragraph>{`Step: ${step.step}`}</Paragraph>
-                    <Paragraph>{`Time: ${step.timeToPrepare}-min`}</Paragraph>
-                  </View>
-                  <Paragraph>{`Method: ${step.method}`}</Paragraph>
-                  <Paragraph>{step.description}</Paragraph>
-                </Card.Content>
-                <Divider />
-              </>
+                  >{`Step: ${step.step}`}</Paragraph>
+
+                  <Paragraph
+                    style={{ fontSize: 16, fontWeight: "bold" }}
+                  >{`Time: ${step.timeToPrepare}-min`}</Paragraph>
+                </View>
+                <Paragraph>{`Method: ${step.method}`}</Paragraph>
+                <Paragraph>{step.description}</Paragraph>
+                <IconButton
+                  style={styles.deleteButtom}
+                  icon="delete"
+                  color={"#da454d"}
+                  size={20}
+                  onPress={() => deleteStep(step.id)}
+                />
+              </Card.Content>
             )}
           />
         </Card>
       )}
 
-      <TextInput
+      {/* <TextInput
         style={styles.textInput}
         label="step"
         keyboardType="number-pad"
@@ -117,7 +190,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         mode="outlined"
         onChangeText={(value) => setStep(value)}
         value={step}
-      />
+      /> */}
 
       <TextInput
         style={styles.textInput}
@@ -133,7 +206,6 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         style={styles.textInput}
         label="time to prepare"
         keyboardType="number-pad"
-        placeholder="25"
         mode="outlined"
         onChangeText={(value) => setTimeToPrepare(value)}
         value={timeToPrepare}
@@ -235,6 +307,12 @@ const styles = StyleSheet.create({
 
   stepInput: {
     width: "80%",
+  },
+
+  deleteButtom: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
   },
 
   card: {

@@ -20,6 +20,16 @@ class StepService {
     const deletedStep = await api.delete(`/steps/${id}`);
     return deletedStep;
   }
+
+  async update(id: string | number, steps: Steps){
+    const updatedSteps = await api.put(`/steps/${id}`, steps);
+    return updatedSteps;
+  }
+
+  async show(id: string | number){
+    const step = await api.get(`/steps/${id}`);
+    return step; 
+  }
 }
 
 export { StepService }

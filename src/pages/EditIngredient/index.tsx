@@ -23,13 +23,15 @@ import { Errors } from "../../models/Errors";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ingredientAddAction,
+  ingredientClearAction,
   ingredientCreateListAction,
   ingredientRemoveAction,
-  ingredientClearAction,
 } from "../../actions/ingredientAction";
+import {createRecipeActions} from '../../actions/RecipeAction';
 import RootState from "../../models/RootState";
 import { Ingredients } from "../../models/ingredients";
 import { IRecipes } from "../../models/Recipe";
+import { RecipeService } from "../../services/RecipeService";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -48,6 +50,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
 
   const navigation = useNavigation();
   const ingredientService = new IngredientService();
+  const recipeService = new RecipeService();
   const dispatch = useDispatch();
 
   const recipe = useSelector(
@@ -75,6 +78,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
 
   const addIngredient = useCallback(() => {
     const ingredient: IIngredient = {
+      id: v4(),
       name: name,
       quantity: parseInt(quantity),
       unitMeasurement: measurementUnit,
@@ -98,7 +102,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        dispatch(ingredientAddAction(ingredient))
+        dispatch(ingredientAddAction(ingredient));
         setName("");
         setQuantity("");
         setMeasurementUnit("g");
@@ -111,26 +115,41 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
           setErrors(errors);
         }
       });
-  }, [
-    name,
-    quantity,
-    measurementUnit,
-    withoutLactose,
-    withoutGluten,
-    errors,
-  ]);
+  }, [name, quantity, measurementUnit, withoutLactose, withoutGluten, errors]);
 
   const createNewIngredients = useCallback(() => {
-    ingredientService.update(id, {
-      id,
-      ingredients, 
-      recipeId: recipe.id,
-    } as Ingredients ); 
+    ingredientService
+      .update(id, {
+        id,
+        ingredients,
+        recipeId: recipe.id,
+      } as Ingredients)
+      .then((response) => {
+        const ingredient = response.data as Ingredients;
+
+        const recipeUpdated = {
+          id: recipe.id,
+          description: recipe.description,
+          category: recipe.category,
+          favorite: recipe.favorite,
+          imagePath: recipe.imagePath,
+          mealCategory: recipe.mealCategory,
+          portions: recipe.portions,
+          timeToPrepare: recipe.timeToPrepare,
+          title: recipe.title,
+          steps: recipe.steps,
+          ingredients: ingredients,
+        } as IRecipes;
+
+        dispatch(createRecipeActions(recipeUpdated))
+
+        recipeService.put(ingredient.recipeId, recipeUpdated);
+      });
   }, [ingredients]);
 
   const deleteIngredient = (id: string) => {
     dispatch(ingredientRemoveAction(id));
-  }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.ingredientContainer}>
@@ -143,7 +162,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
             keyExtractor={(ingredient) => ingredient.id}
             data={ingredients}
             renderItem={({ item: ingredient }) => (
-              <Card style={styles.card}>
+              <Card key={ingredient.id} style={styles.card}>
                 <Card.Content>
                   <View
                     style={{

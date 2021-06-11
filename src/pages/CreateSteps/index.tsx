@@ -149,12 +149,12 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
       <Title style={styles.pageTitle}>Create steps</Title>
 
       {steps.length !== 0 && (
+        <Card style={styles.card}>
         <FlatList
           keyExtractor={(step) => step.id}
           data={steps}
           style={styles.cardList}
           renderItem={({ item: step }) => (
-            <Card style={styles.card}>
               <Card.Content>
                 <View
                   style={{
@@ -185,9 +185,9 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
                   onPress={() => deleteStep(step.id)}
                 />
               </Card.Content>
-            </Card>
           )}
         />
+            </Card>
       )}
 
       {/* <TextInput
