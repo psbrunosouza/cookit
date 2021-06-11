@@ -37,10 +37,6 @@ const Recipes: React.FC<Props> = ({ route }) => {
     });
   }, []);
 
-  React.useEffect(() => {
-      
-  }, [recipes]);
-
   return (
     <ScrollView contentContainerStyle={styles.Container}>
       <Title style={styles.pageTitle}>Lista de receitas</Title>
@@ -132,6 +128,5 @@ const styles = StyleSheet.create({
     paddingRight: 4
   }
 });
-
 
 export default Recipes;

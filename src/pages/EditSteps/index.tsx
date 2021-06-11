@@ -45,8 +45,9 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   const [description, setDescription] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("bake");
   const [temperature, setTemperature] = React.useState<string>("low");
-  const [timeToPrepare, setTimeToPrepare] = React.useState<string>("");
-  const [temperatures, setTemperatures] = React.useState<string[]>([
+  const [timeToPrepare, setTimeToPrepare] = React.useState<number>(0);
+  const [step, setStep] = React.useState<number>(0);
+    const [temperatures, setTemperatures] = React.useState<string[]>([
     "none",
     "low",
     "medium",
@@ -82,26 +83,26 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   }, [id]);
 
   const addStep = useCallback(() => {
-    const step: IStep = {
+    const item: IStep = {
       id: v4(),
-      step: 1,
+      step: step,
       description: description,
-      timeToPrepare: Number.parseInt(timeToPrepare),
+      timeToPrepare: timeToPrepare,
       method: method,
       temperature: temperature,
     };
 
-    dispatch(stepAddAction(step));
+    dispatch(stepAddAction(item));
     setDescription("");
-    setTimeToPrepare("");
+    setTimeToPrepare(0);
     setMethod("");
     setTemperature("none");
 
-  }, [id, steps, description, method, temperature, temperatures]);
+  }, [id, steps, description, method, temperature,timeToPrepare]);
 
   const deleteStep = useCallback((id: string) => {
     dispatch(stepRemoveAction(id))
-  }, [id, steps, description, method, temperature, temperatures]);
+  }, [id, steps, description, method, temperature, timeToPrepare]);
 
   const createNewSteps = useCallback(() => {
     const stepService = new StepService();
@@ -139,7 +140,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Title style={styles.pageTitle}>Add new recipe</Title>
+      <Title style={styles.pageTitle}>Add new step</Title>
 
       {steps?.length !== 0 && (
         <Card style={styles.card}>
@@ -182,15 +183,15 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         </Card>
       )}
 
-      {/* <TextInput
+      <TextInput
         style={styles.textInput}
         label="step"
         keyboardType="number-pad"
         placeholder="77"
         mode="outlined"
-        onChangeText={(value) => setStep(value)}
-        value={step}
-      /> */}
+        onChangeText={(value) => setStep(+value)}
+        value={step.toString()}
+      />
 
       <TextInput
         style={styles.textInput}
@@ -207,8 +208,8 @@ const EditSteps: React.FC<Props> = ({ route }) => {
         label="time to prepare"
         keyboardType="number-pad"
         mode="outlined"
-        onChangeText={(value) => setTimeToPrepare(value)}
-        value={timeToPrepare}
+        onChangeText={(value) => setTimeToPrepare(+value)}
+        value={timeToPrepare.toString()}
       />
 
       <View style={styles.pickerContainer}>

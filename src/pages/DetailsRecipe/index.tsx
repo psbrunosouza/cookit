@@ -46,6 +46,11 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
     stepService.index().then((response) => {
       const steps = response.data as Steps[];
       setSteps(steps);
+      steps.forEach((step) => {
+        step.steps.forEach((time) => {
+          setTimeToPrepare(value => value += time.timeToPrepare);
+        })
+      })
     })
     
   }, [])
