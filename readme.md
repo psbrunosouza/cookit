@@ -5,14 +5,16 @@
 <p align="left">
 O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita, com imagem, título descrição, etc. Sua lista de ingredientes e o passo a passo para realizar aquela receita. 
 </p>
-<a href="https://www.youtube.com/watch?v=TtyS0m4nP34">Video de apresentação do projeto</a>
+<a href="https://www.youtube.com/watch?v=TtyS0m4nP34">Video de apresentação do projeto</a> <br>
+<a href="https://www.youtube.com/watch?v=WmZWpAoGYo0">Video de apresentação do projeto segunda parte</a>
 
 <h2 align="center">Membros</h2>
 <p align="center">Anderson Barbosa Apolinario</p>
 <p align="center">Bruno Pinheiro de Souza</p>
-<p align="center">William dos Santos Santos</p>
+<p align="center">William dos Santos Santana</p>
 
 <br/>
+<h3>Para está segunda etapa foram criados serviços para a utilização do mockAPI, além da criação dos reducers dos demais componentes utilizados <h3>
 
 <h3 align="center">Recipe page - William</h3>
 <p align="center">CREATE-RECIPE</p>
