@@ -42,6 +42,8 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   const [method, setMethod] = React.useState<string>("bake");
   const [temperature, setTemperature] = React.useState<string>("low");
   const [timeToPrepare, setTimeToPrepare] = React.useState<string>("");
+  const [step, setStep] = React.useState<number>(0);
+
   const [temperatures, setTemperatures] = React.useState<string[]>([
     "none",
     "low",
@@ -64,9 +66,9 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
   }, [])
 
   const insertStep = useCallback(() => {
-    const step: IStep = {
+    const item: IStep = {
       id: v4(),
-      step: 1,
+      step: step,
       description: description,
       timeToPrepare: Number.parseInt(timeToPrepare),
       method: method,
@@ -75,14 +77,14 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
 
     const schema = yup.object().shape({
       description: yup.string().min(5).required("field required"),
-     // step: yup.number().required("field required"),
+     step: yup.number().required("field required"),
       timeToPrepare: yup.number().required("field required"),
     });
 
     schema
       .validate(
         {
-          //step,
+          step,
           description,
           timeToPrepare,
         },
@@ -91,7 +93,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        dispatch(stepAddAction(step));
+        dispatch(stepAddAction(item));
         setDescription("");
         setTimeToPrepare("");
         setMethod("");
@@ -190,15 +192,15 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
             </Card>
       )}
 
-      {/* <TextInput
+      <TextInput
         style={styles.textInput}
         label="step number"
         keyboardType="number-pad"
         mode="outlined"
-        onChangeText={(value) => setStep(value)}
-        value={step}
+        onChangeText={(value) => setStep(+value)}
+        value={step.toString()}
       />
-      {errors.step && <Text style={styles.erroText}>{errors.step}</Text>} */}
+      {errors.step && <Text style={styles.erroText}>{errors.step}</Text>}
 
       <TextInput
         style={styles.textInput}
@@ -285,7 +287,7 @@ const CreateSteps: React.FC<Props> = ({ route }) => {
         <Button
           onPress={() => {
             createStep();
-            navigation.navigate("Recipes");
+            navigation.navigate("Recipes", { recipe: recipe});
           }}
           style={styles.buttonAdd}
           mode="contained"
