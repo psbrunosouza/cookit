@@ -64,7 +64,7 @@ const Recipes: React.FC<Props> = ({ route }) => {
                 keyExtractor={ingredient => ingredient.id}
                 data={recipe.ingredients}
                 renderItem={({ item: ingredient }) => (
-                  <Caption style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
+                  <Caption key={ingredient.id} style={styles.ingredientTag}>{`${ingredient.name}`}</Caption>
                 )}
               />
 
