@@ -1,39 +1,34 @@
-import { IRecipes } from "../models/Recipe";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IStep } from "../models/Step";
+import { Steps} from '../models/steps';
+import api from './api';
 
 class StepService {
 
-  async create(recipeId: string, steps: IStep[] ): Promise<void> {
-    try{
-      const object = await AsyncStorage.getItem(recipeId) as string;
-      const recipe: IRecipes = JSON.parse(object);
-
-      steps.forEach((step) => {
-        recipe.steps.push(step)
-      });
-
-      await AsyncStorage.setItem(recipeId, JSON.stringify(recipe));
-    }catch(e){
-      console.log(e);
-    }
+  async index(){
+    const steps = api.get(`/steps`);
+    return steps;
+  }
+  
+  async create(steps: Steps) {
+    api.post(`/steps`, steps).then((response) => {
+      console.log(response);
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
-  async update(recipeId: string, steps: IStep[] ): Promise<void> {
-    try{
-      const object = await AsyncStorage.getItem(recipeId) as string;
-      const recipe: IRecipes = JSON.parse(object);
+  async delete(id: string | number){
+    const deletedStep = await api.delete(`/steps/${id}`);
+    return deletedStep;
+  }
 
-      recipe.steps = [];
+  async update(id: string | number, steps: Steps){
+    const updatedSteps = await api.put(`/steps/${id}`, steps);
+    return updatedSteps;
+  }
 
-      steps.forEach((step) => {
-        recipe.steps.push(step)
-      });
-
-      await AsyncStorage.setItem(recipeId, JSON.stringify(recipe));
-    }catch(e){
-      console.log(e);
-    }
+  async show(id: string | number){
+    const step = await api.get(`/steps/${id}`);
+    return step; 
   }
 }
 

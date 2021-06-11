@@ -17,12 +17,12 @@ import { EditIngredient } from "../../pages/EditIngredient";
 import { EditSteps } from "../../pages/EditSteps";
 
 type RootStackParamList = {
-  Recipes: undefined;
+  Recipes: {recipeId: string | number};
   CreateRecipe: {recipe: IRecipes};
   addIngredient: {recipe: IRecipes};
   CreateSteps: {recipe: IRecipes};
-  DetailsRecipe: {recipe: IRecipes};
-  EditRecipe: {recipe: IRecipes};
+  DetailsRecipe: {recipeId: string| number | undefined};
+  EditRecipe:  {recipeId: string| number | undefined};
   EditIngredient: {recipe: IRecipes};
   EditSteps: {recipe: IRecipes};
 };

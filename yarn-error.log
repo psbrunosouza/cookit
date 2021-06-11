@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add @types
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add @react-navigation
 
 PATH: 
-  C:\Users\Bruno Pinheiro\Documents\cmder\vendor\bin;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\git-for-windows\cmd;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\conemu-maximus5\ConEmu\Scripts;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\conemu-maximus5;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\conemu-maximus5\ConEmu;C:\Python27\;C:\Python27\Scripts;C:\Python38\Scripts\;C:\Python38\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\nodejs\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\Java\jdk1.8.0_211\bin;C:\Android\Sdk\emulator;C:\Android\Sdk\tools;C:\Android\Sdk\tools\bin;C:\Android\Sdk\platform-tools;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\PuTTY\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Bruno Pinheiro\AppData\Local\Microsoft\WindowsApps;C:\Users\Bruno Pinheiro\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Bruno Pinheiro\.dotnet\tools;C:\Users\Bruno Pinheiro\AppData\Local\GitHubDesktop\bin;C:\Users\Bruno Pinheiro\AppData\Roaming\npm;C:\Users\Bruno Pinheiro\AppData\Local\Yarn\bin;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\git-for-windows\mingw64\bin;C:\Users\Bruno Pinheiro\Documents\cmder\vendor\git-for-windows\usr\bin;C:\Users\Bruno Pinheiro\Documents\cmder
+  C:\Python27\;C:\Python27\Scripts;C:\Python38\Scripts\;C:\Python38\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\nodejs\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\Java\jdk1.8.0_211\bin;C:\Android\Sdk\emulator;C:\Android\Sdk\tools;C:\Android\Sdk\tools\bin;C:\Android\Sdk\platform-tools;C:\Program Files\PuTTY\;C:\Program Files\MongoDB\Server\4.4\bin;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\PostgreSQL\13\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Bruno Pinheiro\AppData\Local\Microsoft\WindowsApps;C:\Users\Bruno Pinheiro\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Bruno Pinheiro\.dotnet\tools;C:\Users\Bruno Pinheiro\AppData\Local\GitHubDesktop\bin;C:\Users\Bruno Pinheiro\AppData\Roaming\npm;C:\Users\Bruno Pinheiro\AppData\Local\Yarn\bin;C:\Program Files\Git\bin;C:\Program Files\Git\cmd;C:\Program Files\PostgreSQL\13\bin;
 
 Yarn version: 
   1.22.5
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types: Request "https://registry.yarnpkg.com/@types" returned a 405
+  Error: https://registry.yarnpkg.com/@react-navigation: Request "https://registry.yarnpkg.com/@react-navigation" returned a 405
       at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66106:18)
       at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140749:22)
       at Request.emit (events.js:315:20)
@@ -53,7 +53,7 @@ npm manifest:
       "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
       "react-native-elements": "^3.3.2",
       "react-native-gesture-handler": "^1.10.3",
-      "react-native-paper": "^4.7.2",
+      "react-native-paper": "^4.9.1",
       "react-native-picker-select": "^8.0.4",
       "react-native-reanimated": "^2.1.0",
       "react-native-safe-area-context": "^3.2.0",
@@ -1173,10 +1173,10 @@ Lockfile:
       lodash "^4.17.19"
       to-fast-properties "^2.0.0"
   
-  "@callstack/react-theme-provider@^3.0.5":
-    version "3.0.5"
-    resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.5.tgz#a173e455e9603c9c45357a3b6ace1273086527ca"
-    integrity sha512-Iec+ybWN0FvNj87sD3oWo/49edGUP0UOSdMnzCJEFJIDYr992ECIuOV89burAAh2/ibPCxgLiK6dmgv2mO/8Tg==
+  "@callstack/react-theme-provider@^3.0.6":
+    version "3.0.6"
+    resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.6.tgz#7dac483037e27e28676bdf1431ba87b88f21118f"
+    integrity sha512-wwKMXfmklfogpalNZT0W+jh76BIquiYUiQHOaPmt/PCyCEP/E6rP+e7Uie6mBZrfkea9WJYJ+mus6r+45JAEhg==
     dependencies:
       deepmerge "^3.2.0"
       hoist-non-react-statics "^3.3.0"
@@ -5533,12 +5533,12 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
     integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
   
-  react-native-paper@^4.7.2:
-    version "4.7.2"
-    resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.7.2.tgz#a40d1da87af5b030d45b525313cd703d490876ff"
-    integrity sha512-MOcDWjBOaknEpQgdm4fIOsRFIt4PJlMCgWlLk4kIe8Wv99/M0JIoxWABkAf4Lj5BuJgXjXdwr0DA/lhGY1BRoQ==
+  react-native-paper@^4.9.1:
+    version "4.9.1"
+    resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.9.1.tgz#9b2aadcb1bd48ff6825641df60821e20e0cc8276"
+    integrity sha512-vGgNvQE/GlNSjwJw+1LW0yoULTh7enxln16bYfOoI9Xiz1NOKxhfyQN0/LlZn7JFhRdbXW+3+6yMBJ50Emt+ng==
     dependencies:
-      "@callstack/react-theme-provider" "^3.0.5"
+      "@callstack/react-theme-provider" "^3.0.6"
       color "^3.1.2"
       react-native-iphone-x-helper "^1.3.1"
   

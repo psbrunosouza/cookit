@@ -1,29 +1,38 @@
-import React from 'react';
+import React from "react";
+import { Provider } from "react-redux";
+import { createStore, combineReducers} from "redux";
+import ingredientReducer from "./src/reducer/ingredientReducer";
+import recipeReducer from './src/reducer/recipeReducer';
+import { NavigationContainer } from "@react-navigation/native";
+import { MainNavigation } from "./src/navigation/MainNavigation";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import stepReducer from "./src/reducer/stepsReducer";
 
-// ROUTES
-import { NavigationContainer } from '@react-navigation/native';
-import { MainNavigation } from './src/navigation/MainNavigation';
-import { DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#2CAC60',
-    accent: '#2CAC60',
+    primary: "#2CAC60",
+    accent: "#2CAC60",
   },
 };
 
-export default function App() {
+const allReducers = combineReducers({
+    ingredientReducer,
+    recipeReducer,
+    stepReducer
+ });
 
+export const store = createStore(allReducers);
+export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer >
-        <MainNavigation />
-      </NavigationContainer>
-    </PaperProvider>
+    <Provider store={store}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <MainNavigation />
+        </NavigationContainer>
+      </PaperProvider>
+    </Provider>
   );
 }
-
-
-

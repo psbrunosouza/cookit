@@ -17,7 +17,9 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
-
+import { useDispatch, useSelector } from "react-redux";
+import { createRecipeActions  } from '../../actions/RecipeAction';
+import RootState from '../../models/RootState';
 type RouteStackProp = RouteProp<any, any>;
 
 type Props = {
@@ -25,9 +27,6 @@ type Props = {
 };
 
 const EditRecipe: React.FC<Props> = ({ route }) => {
-  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
-  const [id, setId] = React.useState<string>("");
-  const [buttonLabel, setButtonLabel] = React.useState<string>("next");
   const [title, setTitle] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [imagePath, setImagePath] = React.useState<string>("");
@@ -50,27 +49,34 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
   ]);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const recipe = useSelector((state:RootState) => state.recipeReducer);
 
   useEffect(() => {
-    setRecipe(route.params?.recipe);
-    if (route.params?.recipe) {
-      setId(recipe.id);
-      setTitle(recipe.title);
-      setDescription(recipe.description);
-      setImagePath(recipe.imagePath);
-      setCategory(recipe.category);
-      setMealCategory(recipe.mealCategory);
-      setPortions((recipe.portions as unknown) as string);
+    const recipeService = new RecipeService
+    if (route.params?.recipeId) {
+
+      recipeService.show(route.params?.recipeId).then((response) => {
+        
+        const recipe = response.data as IRecipes
+        dispatch(createRecipeActions(recipe))
+        setTitle(recipe.title);
+        setDescription(recipe.description);
+        setImagePath(recipe.imagePath);
+        setCategory(recipe.category);
+        setMealCategory(recipe.mealCategory);
+        setPortions((recipe.portions as unknown) as string);
+      })
     }
-  }, [recipe]);
+  }, []);
 
   const addRecipe = useCallback(() => {
-    const service = new RecipeService();
+    const recipeService = new RecipeService();
 
-    const item: IRecipes = {
-      id,
+    const recipeUpdated: IRecipes = {
+      id: recipe.id,
       title: title,
-      description: description,
+      description: description, 
       imagePath: imagePath,
       portions: Number.parseInt(portions),
       category: category,
@@ -79,39 +85,17 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
       mealCategory: mealCategory,
       ingredients: recipe.ingredients,
       steps: recipe.steps,
-    };
-    setId(id);
-    setButtonLabel("confirm");
-    service.update(id, item);
+    } 
+    recipeService.put(recipe.id, recipeUpdated).then((data) => {
+    })
   }, [
-    id,
-    buttonLabel,
-    title,
-    description,
-    imagePath,
-    portions,
-    category,
-    mealCategory,
-  ]);
-
-  const removeRecipe = useCallback(
-    (id: string) => {
-      const service = new RecipeService();
-      service.remove(id).then((response) => {
-        return response;
-      });
-    },
-    [
-      id,
-      buttonLabel,
       title,
       description,
       imagePath,
       portions,
       category,
       mealCategory,
-    ]
-  );
+  ]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -210,10 +194,6 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
         <View style={styles.buttonContainer}>
           <Button
             onPress={() => {
-              if (buttonLabel === "confirm") {
-                setButtonLabel("next");
-              }
-              removeRecipe("@recipe");
               navigation.navigate("Recipes");
             }}
             style={styles.buttonBack}
@@ -225,7 +205,6 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
 
           <Button
             onPress={() => {
-              if (buttonLabel === "next") {
                 const schema = yup.object().shape({
                   title: yup.string().min(5).required("field required"),
                   description: yup.string().required("field required"),
@@ -258,18 +237,14 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
                       setErrors(errors);
                     }
                   });
-              }
 
-              if (buttonLabel === "confirm") {
-                navigation.navigate("EditIngredient", { recipe: recipe });
-                setButtonLabel("next");
-              }
+                navigation.navigate("EditIngredient");
             }}
             style={styles.buttonNext}
             mode="contained"
             compact={false}
           >
-            <Text style={styles.buttonTextStyle}>{buttonLabel}</Text>
+            <Text style={styles.buttonTextStyle}>Confirm</Text>
           </Button>
         </View>
       </View>

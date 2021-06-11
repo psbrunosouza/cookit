@@ -1,5 +1,5 @@
 // CORE
-import React, { useEffect, useCallback } from "react";
+import React, {useEffect} from "react";
 // STRUCTURE
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import {
@@ -10,7 +10,6 @@ import {
   Caption,
   Card,
   Paragraph,
-  Divider,
   IconButton,
 } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
@@ -18,10 +17,18 @@ import { FlatList } from "react-native-gesture-handler";
 import { v4 } from "uuid";
 import { IIngredient } from "../../models/Ingredient";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { IngredientService } from "../../services/IngredientService";
 import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ingredientAddAction,
+  ingredientRemoveAction,
+  ingredientClearAction,
+  ingredientCreateListAction
+} from "../../actions/ingredientAction";
+import RootState from "../../models/RootState";
+import { IRecipes } from "../../models/Recipe";
 
 type RouteStackProp = RouteProp<any, any>;
 
@@ -30,8 +37,6 @@ type Props = {
 };
 
 const CreateIngredient: React.FC<Props> = ({ route }) => {
-  const [recipeId, setRecipeId] = React.useState("");
-  const [ingredients, setIngredients] = React.useState<IIngredient[]>([]);
   const [name, setName] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
   const [measurementUnit, setMeasurementUnit] = React.useState("g");
@@ -39,29 +44,32 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
   const [withoutGluten, setWithoutGluten] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<Errors>({} as Errors);
 
+  const dispatch = useDispatch();
+
+  const ingredients = useSelector(
+    (state: RootState) => state.ingredientReducer
+  ) as IIngredient[];
+  
+  const recipe = useSelector(
+    (state: RootState) => state.recipeReducer
+  ) as IRecipes;
+
   const navigation = useNavigation();
 
   useEffect(() => {
-    setRecipeId(route.params?.id);
-  }, [
-    ingredients,
-    recipeId,
-    name,
-    quantity,
-    withoutLactose,
-    measurementUnit,
-    withoutGluten,
-  ]);
+    return () => {
+      dispatch(ingredientClearAction());
+    }
+  }, []);
 
-  const addIngredient = useCallback(() => {
-    const item: IIngredient = {
+  const insertIngredient = () => {
+    const ingredient: IIngredient = {
       id: v4(),
       name: name,
       quantity: parseInt(quantity),
       unitMeasurement: measurementUnit,
       withoutLactose: withoutLactose,
       withoutGluten: withoutGluten,
-      recipeId: recipeId,
     };
 
     const schema = yup.object().shape({
@@ -80,7 +88,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         }
       )
       .then(() => {
-        setIngredients([...ingredients, item]);
+        dispatch(ingredientAddAction(ingredient));
         setName("");
         setQuantity("");
         setMeasurementUnit("g");
@@ -93,47 +101,15 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
           setErrors(errors);
         }
       });
-  }, [
-    ingredients,
-    recipeId,
-    name,
-    quantity,
-    withoutLactose,
-    measurementUnit,
-    withoutGluten,
-  ]);
+  };
 
-  const createNewIngredients = useCallback(() => {
-    const service = new IngredientService();
+  const createIngredientsList = () => {
+    dispatch(ingredientCreateListAction(ingredients))
+  }
 
-    service.create("@recipe", ingredients).then((response) => {
-      return response;
-    });
-
-    setName("");
-    setQuantity("");
-    setMeasurementUnit("g");
-    setWithoutGluten(false);
-    setWithoutLactose(false);
-  }, [
-    ingredients,
-    name,
-    quantity,
-    withoutLactose,
-    measurementUnit,
-    withoutGluten,
-    errors,
-  ]);
-
-  const deleteIngredient = useCallback(
-    (id: string) => {
-      const ingredientsUpdated = ingredients.filter((ingredient) => {
-        return ingredient.id !== id;
-      });
-      setIngredients(ingredientsUpdated);
-    },
-    [ingredients]
-  );
+  const deleteIngredient = (id: string) => {
+    dispatch(ingredientRemoveAction(id));
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.ingredientContainer}>
@@ -257,7 +233,7 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
             mode="contained"
             compact={false}
             style={styles.buttonAdd}
-            onPress={() => addIngredient()}
+            onPress={() => insertIngredient()}
           >
             <Text style={styles.buttonTextStyle}>Add</Text>
           </Button>
@@ -271,8 +247,8 @@ const CreateIngredient: React.FC<Props> = ({ route }) => {
         >
           <Button
             onPress={() => {
-              createNewIngredients();
-              navigation.navigate("CreateSteps", { id: recipeId });             
+              createIngredientsList();
+              navigation.navigate("CreateSteps");
             }}
             style={styles.buttonNext}
             mode="contained"

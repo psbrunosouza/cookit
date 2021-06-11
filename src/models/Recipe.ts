@@ -1,5 +1,7 @@
 import {IIngredient} from './Ingredient';
+import { Ingredients } from './ingredients';
 import {IStep} from './Step';
+import { Steps } from './steps';
 
 export interface IRecipes{
   id: string,
@@ -12,7 +14,7 @@ export interface IRecipes{
   category: string, // vegan | brazilian
   mealCategory: string,
   ingredients: IIngredient[],
-  steps: IStep[]
+  steps: IStep[],
 }
 
 // TIME TO PREPARE SHOULD BE CALCULATED BASED ON STEPS TIME

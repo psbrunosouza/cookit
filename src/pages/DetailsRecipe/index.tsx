@@ -5,48 +5,55 @@ import {
   Surface,
   IconButton,
   Card,
-  Paragraph,
   Divider,
 } from "react-native-paper";
 import { View, ScrollView, StyleSheet, Image, FlatList } from "react-native";
 import { ShowIngredients } from "../ShowIngredients";
 import { RouteProp, useNavigation } from "@react-navigation/native";
-import { IIngredient } from "../../models/Ingredient";
-import { IStep } from "../../models/Step";
-import { IRecipes } from "../../models/Recipe";
 import { RecipeService } from "../../services/RecipeService";
+import { IRecipes } from "../../models/Recipe";
+import { IngredientService } from "../../services/IngredientService";
+import { Ingredients } from "../../models/ingredients";
+import { StepService } from "../../services/StepService";
+import { Steps } from "../../models/steps";
 
 type Props = {
   route: RouteProp<any, any>;
 };
 
 const DetailsRecipe: React.FC<Props> = ({ route }) => {
-  const [id, setId] = useState<string>("");
-  const [recipe, setRecipe] = useState<IRecipes>();
-  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
-  const [steps, setSteps] = useState<IStep[]>([]);
   const [timeToPrepare, setTimeToPrepare] = useState<number>(0);
+  const [recipe, setRecipe] = React.useState<IRecipes>({} as IRecipes);
+  const [ingredients, setIngredients] = React.useState<Ingredients[]>([]);
+  const [steps, setSteps] = React.useState<Steps[]>([]);
+  const ingredientService = new IngredientService();
   const service = new RecipeService();
+  const stepService = new StepService();
 
+ 
+  const navigation = useNavigation();
   useEffect(() => {
-    setRecipe(route.params?.recipe);
-    setSteps(route.params?.recipe.steps);
-    setIngredients(route.params?.recipe.ingredients);
-    if(recipe){
-      setId(recipe.id);
-    }
-    service.getTimeToPrepare(id).then((response) => {
-      setTimeToPrepare(response)
+    service.show(route.params?.recipeId).then((response) => {
+      const recipe = response.data;
+      setRecipe(recipe);
     });
 
-  }, [recipe, ingredients, steps, id, timeToPrepare]);
+    ingredientService.index().then((response) => {
+      const ingredients = response.data as Ingredients[];
+      setIngredients(ingredients);
+    })
 
-  const removeRecipe = useCallback((id: string) => {
-    const service = new RecipeService();
-    service.remove(id);
-  }, [id]);
-
-  const navigation = useNavigation();
+    stepService.index().then((response) => {
+      const steps = response.data as Steps[];
+      setSteps(steps);
+      steps.forEach((step) => {
+        step.steps.forEach((time) => {
+          setTimeToPrepare(value => value += time.timeToPrepare);
+        })
+      })
+    })
+    
+  }, [])
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -66,7 +73,7 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
         <Surface style={styles.surface}>
           <IconButton
             onPress={() => {
-              navigation.navigate("EditRecipe", {recipe});
+              navigation.navigate("EditRecipe", {recipeId: recipe.id});
             }}
             color="#4889eb"
             icon="square-edit-outline"
@@ -76,8 +83,20 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
         <Surface style={styles.surface}>
           <IconButton
             onPress={() => {
-              removeRecipe(id);
-              navigation.navigate("Recipes");
+              service.remove(recipe.id).then((recipeId) => { 
+                navigation.navigate("Recipes", {recipeId: recipe.id});
+                ingredients.forEach((ingredient) => {
+                  if(ingredient.recipeId === route.params?.recipeId){
+                    ingredientService.delete(ingredient.id);
+                  }
+                })
+
+                steps.forEach((step) => {
+                  if(step.recipeId === route.params?.recipeId){
+                    stepService.delete(step.id);
+                  }
+                })
+              })
             }}
             color="#f71c1c"
             icon="delete"
@@ -86,13 +105,13 @@ const DetailsRecipe: React.FC<Props> = ({ route }) => {
       </View>
 
       <View>
-        <ShowIngredients ingredients={ingredients} />
+        <ShowIngredients ingredients={recipe.ingredients} />
       </View>
       <Caption style={styles.CaptionWidth}> Step by step </Caption>
       <Card style={styles.card}>
         <FlatList
           keyExtractor={(step) => step.id}
-          data={steps}
+          data={recipe.steps}
           renderItem={({ item: step }) => (
             <>
               <Card.Content>
