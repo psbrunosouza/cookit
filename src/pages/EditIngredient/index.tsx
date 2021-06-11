@@ -62,6 +62,11 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
   ) as IIngredient[];
 
   useEffect(() => {
+    recipeService.show(recipe.id).then((response) => {
+      const recipe = response.data as IRecipes;
+      dispatch(createRecipeActions(recipe));
+    })
+
     ingredientService.index().then((response) => {
       const ingredients = response.data as Ingredients[];
 
@@ -74,7 +79,7 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
         dispatch(ingredientCreateListAction(ingredient.ingredients));
       });
     });
-  }, [id]);
+  }, []);
 
   const addIngredient = useCallback(() => {
     const ingredient: IIngredient = {
@@ -141,9 +146,8 @@ const EditIngredient: React.FC<Props> = ({ route }) => {
           ingredients: ingredients,
         } as IRecipes;
 
-        dispatch(createRecipeActions(recipeUpdated))
 
-        recipeService.put(ingredient.recipeId, recipeUpdated);
+        recipeService.update(ingredient.recipeId, recipeUpdated);
       });
   }, [ingredients]);
 

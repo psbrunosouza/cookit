@@ -18,8 +18,8 @@ import * as yup from "yup";
 import getValidationErrors from "../../utils/getValidationErrors";
 import { Errors } from "../../models/Errors";
 import { useDispatch, useSelector } from "react-redux";
-import { createRecipeActions  } from '../../actions/RecipeAction';
-import RootState from '../../models/RootState';
+import { createRecipeActions } from "../../actions/RecipeAction";
+import RootState from "../../models/RootState";
 type RouteStackProp = RouteProp<any, any>;
 
 type Props = {
@@ -49,24 +49,22 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
   ]);
 
   const navigation = useNavigation();
-  const dispatch = useDispatch()
-  const recipe = useSelector((state:RootState) => state.recipeReducer);
+  const dispatch = useDispatch();
+  const recipe = useSelector((state: RootState) => state.recipeReducer);
 
   useEffect(() => {
-    const recipeService = new RecipeService
+    const recipeService = new RecipeService();
     if (route.params?.recipeId) {
-
       recipeService.show(route.params?.recipeId).then((response) => {
-        
-        const recipe = response.data as IRecipes
-        dispatch(createRecipeActions(recipe))
+        const recipe = response.data as IRecipes;
+        dispatch(createRecipeActions(recipe));
         setTitle(recipe.title);
         setDescription(recipe.description);
         setImagePath(recipe.imagePath);
         setCategory(recipe.category);
         setMealCategory(recipe.mealCategory);
-        setPortions((recipe.portions as unknown) as string);
-      })
+        setPortions(recipe.portions as unknown as string);
+      });
     }
   }, []);
 
@@ -76,7 +74,7 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
     const recipeUpdated: IRecipes = {
       id: recipe.id,
       title: title,
-      description: description, 
+      description: description,
       imagePath: imagePath,
       portions: Number.parseInt(portions),
       category: category,
@@ -85,17 +83,12 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
       mealCategory: mealCategory,
       ingredients: recipe.ingredients,
       steps: recipe.steps,
-    } 
-    recipeService.put(recipe.id, recipeUpdated).then((data) => {
-    })
-  }, [
-      title,
-      description,
-      imagePath,
-      portions,
-      category,
-      mealCategory,
-  ]);
+    };
+
+    console.log(recipe.id, recipeUpdated);
+  
+    recipeService.update(recipe.id, recipeUpdated);
+  }, [title, description, imagePath, portions, category, mealCategory]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -205,40 +198,40 @@ const EditRecipe: React.FC<Props> = ({ route }) => {
 
           <Button
             onPress={() => {
-                const schema = yup.object().shape({
-                  title: yup.string().min(5).required("field required"),
-                  description: yup.string().required("field required"),
-                  imagePath: yup.string().url().required("field required"),
-                  portions: yup.number().required("field required"),
-                  category: yup.string().required("field required"),
-                  mealCategory: yup.string().required("field required"),
+              const schema = yup.object().shape({
+                title: yup.string().min(5).required("field required"),
+                description: yup.string().required("field required"),
+                imagePath: yup.string().url().required("field required"),
+                portions: yup.number().required("field required"),
+                category: yup.string().required("field required"),
+                mealCategory: yup.string().required("field required"),
+              });
+
+              schema
+                .validate(
+                  {
+                    title,
+                    description,
+                    imagePath,
+                    portions,
+                    category,
+                    mealCategory,
+                  },
+                  {
+                    abortEarly: false,
+                  }
+                )
+                .then(() => {
+                  addRecipe();
+                })
+                .catch((e) => {
+                  if (e instanceof yup.ValidationError) {
+                    const errors = getValidationErrors(e);
+                    setErrors(errors);
+                  }
                 });
 
-                schema
-                  .validate(
-                    {
-                      title,
-                      description,
-                      imagePath,
-                      portions,
-                      category,
-                      mealCategory,
-                    },
-                    {
-                      abortEarly: false,
-                    }
-                  )
-                  .then(() => {
-                    addRecipe();
-                  })
-                  .catch((e) => {
-                    if (e instanceof yup.ValidationError) {
-                      const errors = getValidationErrors(e);
-                      setErrors(errors);
-                    }
-                  });
-
-                navigation.navigate("EditIngredient");
+              navigation.navigate("EditIngredient");
             }}
             style={styles.buttonNext}
             mode="contained"

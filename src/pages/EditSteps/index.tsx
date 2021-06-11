@@ -57,6 +57,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const stepService = new StepService();
+  const recipeService = new RecipeService();
 
   const recipe = useSelector(
     (state: RootState) => state.recipeReducer
@@ -65,6 +66,11 @@ const EditSteps: React.FC<Props> = ({ route }) => {
   const steps = useSelector((state: RootState) => state.stepReducer) as IStep[];
 
   useEffect(() => {
+    recipeService.show(recipe.id).then((response) => {
+      const recipe = response.data as IRecipes;
+      dispatch(createRecipeActions(recipe));
+    })
+
     stepService.index().then((response) => {
       const steps = response.data as Steps[];
 
@@ -80,7 +86,7 @@ const EditSteps: React.FC<Props> = ({ route }) => {
 
     });
 
-  }, [id]);
+  }, []);
 
   const addStep = useCallback(() => {
     const item: IStep = {
@@ -132,9 +138,8 @@ const EditSteps: React.FC<Props> = ({ route }) => {
           ingredients: recipe.ingredients,
         } as IRecipes
 
-        dispatch(createRecipeActions(recipeUpdated))
 
-        recipeService.put(step.recipeId, recipeUpdated);
+        recipeService.update(step.recipeId, recipeUpdated);
       });
   }, [id, steps, description, method, temperature, temperatures]);
 

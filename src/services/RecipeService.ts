@@ -22,7 +22,7 @@ class RecipeService {
     return removeRecipe;
   }
 
-  async put(id: string | number,  data: IRecipes) {
+  async update(id: string | number,  data: IRecipes) {
     const uptadeRecipe = await api.put(`/recipes/${id}`, data)
     return uptadeRecipe;
   }
