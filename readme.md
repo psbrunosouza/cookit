@@ -5,7 +5,7 @@
 <p align="left">
 O cookit é um app de registro de receitas, onde podemos cadastrar, uma receita, com imagem, título descrição, etc. Sua lista de ingredientes e o passo a passo para realizar aquela receita. 
 </p>
-<a href="https://www.youtube.com/watch?v=TtyS0m4nP34">Video de apresentação do projeto</a>
+<a href="https://www.youtube.com/watch?v=TtyS0m4nP34">Video de apresentação do projeto</a> <br>
 <a href="https://www.youtube.com/watch?v=WmZWpAoGYo0">Video de apresentação do projeto segunda parte</a>
 
 <h2 align="center">Membros</h2>
